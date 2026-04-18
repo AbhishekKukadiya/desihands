@@ -1,0 +1,444 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<style>
+/* Trending Products Styling */
+.product-card-modern {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+}
+
+.product-card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #ffc107;
+}
+
+.product-card-modern img {
+    transition: transform 0.3s ease;
+}
+
+.product-card-modern:hover img {
+    transform: scale(1.05);
+}
+
+.trending-badge {
+    z-index: 10;
+}
+
+.trending-badge .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.hover-scale {
+    transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .product-card-modern {
+        margin-bottom: 1rem;
+    }
+    
+    .display-6 {
+        font-size: 2rem;
+    }
+}
+
+/* Modern Features Styling */
+.bg-gradient-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.feature-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.social-icon-btn {
+    transition: all 0.3s ease;
+}
+
+.social-icon-btn:hover {
+    transform: translateY(-2px);
+}
+
+.newsletter-signup {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.social-proof {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Enhanced Shadow Effects for Home Page */
+.hero-section {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.category-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    padding: 20px;
+    text-align: center;
+}
+
+.category-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.cta-section {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.btn-shadow {
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-shadow:hover {
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+    transform: translateY(-2px);
+}
+
+.section-shadow {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.icon-shadow {
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.15));
+}
+</style>
+
+{% block content %}
+
+<!-- HERO BANNER -->
+
+<section class="mb-5">
+
+<div class="p-5 text-center bg-light rounded shadow-sm hero-section text-shadow">
+
+<h1 class="fw-bold">Discover Handmade Treasures</h1>
+
+<p class="text-muted">
+Unique handcrafted products made by talented artisans across India.
+</p>
+
+<a href="{% url 'store' %}" class="btn btn-warning btn-lg btn-shadow">
+Shop Now
+</a>
+
+</div>
+
+</section>
+
+
+<!-- CATEGORIES -->
+
+<section id="categories" class="mb-5">
+
+<h3 class="text-center fw-bold mb-4">Shop by Category</h3>
+
+<div class="row g-4 text-center">
+
+{% for c in categories %}
+
+<div class="col-md-3 col-6">
+
+<a href="{% url 'product' c.id %}" class="text-decoration-none text-dark">
+
+<div class="card p-4 shadow-sm category-card">
+
+{% with cname=c.name|lower %}
+{% if 'jewel' in cname %} <i class="bi bi-gem icon-shadow" style="font-size:40px;"></i>
+{% elif 'decor' in cname %} <i class="bi bi-house-heart icon-shadow" style="font-size:40px;"></i>
+{% elif 'paint' in cname or 'art' in cname %} <i class="bi bi-easel icon-shadow" style="font-size:40px;"></i>
+{% elif 'gift' in cname %} <i class="bi bi-gift icon-shadow" style="font-size:40px;"></i>
+{% elif 'wood' in cname %} <i class="bi bi-tree icon-shadow" style="font-size:40px;"></i>
+{% elif 'toy' in cname %} <i class="bi bi-controller icon-shadow" style="font-size:40px;"></i>
+{% else %} <i class="bi bi-tag icon-shadow" style="font-size:40px;"></i>
+{% endif %}
+{% endwith %}
+
+<h6 class="mt-3">{{ c.name }}</h6>
+
+</div>
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</section>
+
+
+<!-- TRENDING PRODUCTS -->
+
+<section class="mb-5">
+
+<div class="text-center mb-5">
+
+<h3 class="fw-bold display-6 mb-3">Trending Now</h3>
+
+<p class="text-muted fs-5">Handpicked favorites from our community</p>
+
+</div>
+
+<div class="row g-4">
+
+{% for trending_product in products|slice:":4" %}
+
+<div class="col-lg-3 col-md-4 col-6">
+
+<a href="{% url 'productdetail' trending_product.id %}" class="text-decoration-none text-dark">
+
+<div class="product-card-modern h-100 d-flex flex-column">
+
+<div class="position-relative overflow-hidden rounded-3" style="height: 200px;">
+
+{% if trending_product.image %}
+
+<img src="{{ trending_product.image.url }}" class="w-100 h-100" alt="{{ trending_product.name }}" style="object-fit: cover;">
+
+{% else %}
+
+<img src="https://via.placeholder.com/300x200/ffc107/000000?text={{ trending_product.name|urlencode }}" class="w-100 h-100" alt="{{ trending_product.name }}" style="object-fit: cover;">
+
+{% endif %}
+
+<div class="trending-badge position-absolute top-3 start-3">
+
+{% if forloop.counter == 1 %}
+
+<span class="badge bg-danger px-2 py-1 rounded-pill">HOT</span>
+
+{% elif forloop.counter == 2 %}
+
+<span class="badge bg-success px-2 py-1 rounded-pill">NEW</span>
+
+{% elif forloop.counter == 3 %}
+
+<span class="badge bg-warning text-dark px-2 py-1 rounded-pill">TRENDING</span>
+
+{% else %}
+
+<span class="badge bg-info px-2 py-1 rounded-pill">LIMITED</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="p-3 flex-grow-1 d-flex flex-column">
+
+<h6 class="fw-bold mb-2 text-truncate">{{ trending_product.name }}</h6>
+
+<p class="text-muted small mb-3 flex-grow-1" style="height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-clamp: 2;">{{ trending_product.description|truncatewords:8 }}</p>
+
+<div class="d-flex justify-content-between align-items-center mt-auto">
+
+<span class="fw-bold text-dark">₹{{ trending_product.price|floatformat:0 }}</span>
+
+{% if trending_product.stock > 0 %}
+
+<span class="badge bg-success px-2 py-1 rounded-pill">In Stock</span>
+
+{% else %}
+
+<span class="badge bg-danger px-2 py-1 rounded-pill">Out of Stock</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<div class="text-center mt-5">
+
+<a href="{% url 'store' %}" class="btn btn-warning btn-lg px-6 py-3 rounded-pill hover-scale shadow-lg btn-shadow">
+<i class="bi bi-grid-3x3-gap me-2"></i>View All Products
+</a>
+
+</div>
+
+</section>
+
+
+<!-- MODERN FEATURES SECTION -->
+
+<section class="mb-5">
+
+<div class="text-center mb-5">
+
+<h3 class="fw-bold display-6 mb-3">Why Choose Desi Hands</h3>
+
+<p class="text-muted fs-5">Experience the best of Indian craftsmanship</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-md-3 col-6">
+
+<div class="feature-card text-center p-4">
+
+<div class="feature-icon mb-3">
+
+<i class="bi bi-award-fill text-warning icon-shadow" style="font-size: 3rem;"></i>
+
+</div>
+
+<h5 class="fw-bold">Authentic Quality</h5>
+
+<p class="text-muted">100% handmade products verified by our expert team</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="feature-card text-center p-4">
+
+<div class="feature-icon mb-3">
+
+<i class="bi bi-truck text-success icon-shadow" style="font-size: 3rem;"></i>
+
+</div>
+
+<h5 class="fw-bold">Fast Delivery</h5>
+
+<p class="text-muted">Quick shipping across India with real-time tracking</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="feature-card text-center p-4">
+
+<div class="feature-icon mb-3">
+
+<i class="bi bi-shield-check text-info icon-shadow" style="font-size: 3rem;"></i>
+
+</div>
+
+<h5 class="fw-bold">Secure Payment</h5>
+
+<p class="text-muted">Safe transactions with multiple payment options</p>
+
+</div>
+
+</div>
+
+<div class="col-md-3 col-6">
+
+<div class="feature-card text-center p-4">
+
+<div class="feature-icon mb-3">
+
+<i class="bi bi-heart-fill text-danger icon-shadow" style="font-size: 3rem;"></i>
+
+</div>
+
+<h5 class="fw-bold">Artisan Support</h5>
+
+<p class="text-muted">Direct support to local artisans and their communities</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- CALL TO ACTION -->
+
+<section class="text-center mb-5">
+
+<h3 class="fw-bold">Become a Seller</h3>
+
+<p class="text-muted">
+Join our platform and sell your handmade creations.
+</p>
+
+<a href="{% url 'seller_register' %}" class="btn btn-warning btn-shadow">
+Start Selling
+</a>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:62041",
+    "http://localhost:62041",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "http://127.0.0.1:58657",
+    "http://localhost:58657",
+    "http://127.0.0.1:56899",
+    "http://localhost:56899",
+    "http://127.0.0.1:52848",
+    "http://localhost:52848",
+    "http://127.0.0.1:64025",
+    "http://localhost:64025",
+    "http://127.0.0.1:63111",
+    "http://localhost:63111",
+    "http://127.0.0.1:55567",
+    "http://localhost:55567",
+    "http://127.0.0.1:53585",
+    "http://localhost:53585",
+]

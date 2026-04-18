@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+.auth-wrapper{
+min-height:75vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.auth-card{
+max-width:650px;
+width:100%;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 20px 50px rgba(0,0,0,0.15);
+border:none;
+}
+
+/* HEADER */
+
+.auth-header{
+background:#111;
+color:white;
+padding:40px;
+text-align:center;
+}
+
+.auth-header h2{
+color:#ffc107;
+font-weight:700;
+font-size:32px;
+}
+
+.auth-header p{
+opacity:0.8;
+}
+
+/* FORM */
+
+.auth-body{
+padding:40px;
+}
+
+.form-control{
+height:55px;
+font-size:17px;
+border-radius:10px;
+border:2px solid #eee;
+}
+
+.form-control:focus{
+border-color:#ffc107;
+box-shadow:none;
+}
+
+/* BUTTON */
+
+.btn-auth{
+background:#ffc107;
+color:#111;
+font-size:18px;
+font-weight:600;
+height:55px;
+border-radius:10px;
+border:none;
+transition:0.3s;
+}
+
+.btn-auth:hover{
+background:#ffca2c;
+transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* DIVIDER */
+
+.auth-divider{
+text-align:center;
+margin:30px 0;
+position:relative;
+}
+
+.auth-divider:before{
+content:"";
+position:absolute;
+top:50%;
+left:0;
+width:100%;
+height:1px;
+background:#ddd;
+}
+
+.auth-divider span{
+background:white;
+padding:0 15px;
+position:relative;
+color:#666;
+}
+
+/* MOBILE */
+
+@media(max-width:576px){
+
+.auth-header{
+padding:30px 20px;
+}
+
+.auth-body{
+padding:30px 20px;
+}
+
+.auth-header h2{
+font-size:26px;
+}
+
+}
+
+</style>
+
+<div class="container auth-wrapper">
+
+<div class="auth-card">
+
+<!-- HEADER -->
+
+<div class="auth-header">
+
+<h2>
+<i class="bi bi-person-circle me-2"></i>
+Welcome to Desi Hands
+</h2>
+
+<p>
+Login to explore beautiful handmade products
+</p>
+
+</div>
+
+<!-- FORM -->
+
+<div class="auth-body">
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-danger alert-dismissible fade show">
+{{ message }}
+<button class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+<form method="POST" action="{% url 'login' %}">
+
+{% csrf_token %}
+
+<div class="mb-4">
+
+<label class="fw-bold mb-2">
+<i class="bi bi-envelope me-2"></i>Email Address
+</label>
+
+<input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+
+</div>
+
+<div class="mb-4">
+
+<label class="fw-bold mb-2">
+<i class="bi bi-lock me-2"></i>Password
+</label>
+
+<input type="password" name="password" class="form-control" placeholder="Enter password" required>
+
+</div>
+
+<div class="d-grid">
+
+<button class="btn btn-auth">
+<i class="bi bi-box-arrow-in-right me-2"></i>
+Login
+</button>
+
+</div>
+
+</form>
+
+<div class="auth-divider">
+<span>OR</span>
+</div>
+
+<div class="text-center">
+
+<p class="mb-3">Don't have an account?</p>
+
+<a href="{% url 'register' %}" class="btn btn-outline-warning btn-lg">
+<i class="bi bi-person-plus me-2"></i>
+Create Account
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,1099 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+.product-detail-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.product-image-container {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
+    background: #f8f9fa;
+    position: relative;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.product-image-container:hover {
+    transform: scale(1.02);
+}
+
+.product-image-container img {
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    border-radius: 15px;
+}
+
+.product-image-container:hover img {
+    transform: scale(1.05);
+}
+
+.product-info h2 {
+    color: #111;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #ffc107;
+    padding-bottom: 10px;
+}
+
+.product-price {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 50px;
+    font-size: 28px;
+    font-weight: 700;
+    display: inline-block;
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* PRODUCT DETAIL RESPONSIVE IMPROVEMENTS */
+
+@media(max-width:768px){
+    .product-detail-container {
+        padding: 20px;
+        margin: 10px;
+        border-radius: 10px;
+    }
+    
+    .product-image-container {
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .product-info h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+    
+    .product-price {
+        font-size: 22px;
+        padding: 12px 20px;
+    }
+    
+    .product-description {
+        font-size: 14px;
+    }
+    
+    .btn-lg {
+        font-size: 16px;
+        padding: 12px 24px;
+    }
+}
+
+@media(max-width:576px){
+    .product-detail-container {
+        padding: 15px;
+        margin: 5px;
+        border-radius: 8px;
+    }
+    
+    .product-image-container {
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .product-info h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    
+    .product-price {
+        font-size: 18px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+    }
+    
+    .product-description {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+    
+    .btn-lg {
+        font-size: 14px;
+        padding: 10px 20px;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .row {
+        margin: 0;
+    }
+    
+    .col-md-6 {
+        padding: 5px;
+    }
+}
+
+/* PRODUCT QUANTITY CONTROLS */
+
+@media(max-width:768px){
+    .quantity-controls {
+        margin-bottom: 15px;
+    }
+    
+    .quantity-controls .btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+    
+    .quantity-controls .form-control {
+        font-size: 14px;
+        text-align: center;
+    }
+}
+
+@media(max-width:576px){
+    .quantity-controls {
+        margin-bottom: 10px;
+    }
+    
+    .quantity-controls .btn {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    .quantity-controls .form-control {
+        font-size: 12px;
+        padding: 6px;
+    }
+}
+
+/* RELATED PRODUCTS */
+
+@media(max-width:768px){
+    .related-products h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+    
+    .related-products .card {
+        margin-bottom: 15px;
+    }
+}
+
+@media(max-width:576px){
+    .related-products h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .related-products .card {
+        margin-bottom: 10px;
+    }
+    
+    .related-products .card-title {
+        font-size: 14px;
+    }
+    
+    .related-products .card-text {
+        font-size: 12px;
+    }
+}
+
+.stock-badge {
+    background: #111;
+    color: #ffc107;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.category-badge {
+    background: #ffc107;
+    color: #111;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.description-box {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.seller-info {
+    background: linear-gradient(135deg, #111 0%, #333 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.add-to-cart-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #ffc107;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+}
+
+.btn-add-cart {
+    background: linear-gradient(45deg, #111, #333);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-add-cart:hover {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    color: #111;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 193, 7, 0.3);
+}
+
+.btn-view-details {
+    background: linear-gradient(45deg, #111, #333);
+    color: white;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-view-details:hover {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    color: #111;
+    transform: translateY(-2px);
+}
+
+.related-products {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 40px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.related-products h4 {
+    color: #111;
+    border-bottom: 3px solid #ffc107;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+.breadcrumb {
+    background: white;
+    border-radius: 50px;
+    padding: 10px 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.breadcrumb-item a {
+    color: #111;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb-item a:hover {
+    color: #ffc107;
+}
+
+.breadcrumb-item.active {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.quantity-input {
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.quantity-input:focus {
+    border-color: #111;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.out-of-stock-alert {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    border-radius: 10px;
+    padding: 20px;
+    border: none;
+}
+
+@media (max-width: 768px) {
+    .product-detail-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .product-price {
+        font-size: 24px;
+        padding: 12px 20px;
+    }
+    
+    .product-info h2 {
+        font-size: 24px;
+    }
+}
+
+/* FLIPKART-LEVEL RESPONSIVE DESIGN FOR PRODUCT DETAIL */
+
+/* Ultra Mobile (320px - 480px) */
+@media(max-width:480px) {
+    .product-detail-container {
+        padding: 15px !important;
+        margin: 5px !important;
+        border-radius: 8px !important;
+    }
+    
+    .product-image-container {
+        border-radius: 8px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .product-image-container img {
+        height: 250px !important;
+    }
+    
+    .product-info h2 {
+        font-size: 18px !important;
+        margin-bottom: 12px !important;
+        border-bottom: 2px solid #ffc107 !important;
+        padding-bottom: 8px !important;
+    }
+    
+    .product-price {
+        font-size: 20px !important;
+        padding: 10px 15px !important;
+        border-radius: 25px !important;
+        margin-bottom: 12px !important;
+        display: block !important;
+        text-align: center !important;
+    }
+    
+    .stock-badge {
+        font-size: 12px !important;
+        padding: 6px 12px !important;
+        border-radius: 15px !important;
+        margin-bottom: 12px !important;
+        display: inline-block !important;
+    }
+    
+    .category-badge {
+        font-size: 12px !important;
+        padding: 4px 10px !important;
+        border-radius: 12px !important;
+    }
+    
+    .description-box {
+        padding: 15px !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+    }
+    
+    .seller-info {
+        padding: 15px !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+    }
+    
+    .add-to-cart-section {
+        padding: 15px !important;
+        border-radius: 8px !important;
+        border: 1px solid #ffc107 !important;
+    }
+    
+    .quantity-input {
+        font-size: 14px !important;
+        padding: 8px !important;
+        border-radius: 8px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .btn-add-cart {
+        font-size: 14px !important;
+        padding: 10px 20px !important;
+        border-radius: 25px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .btn-view-details {
+        font-size: 13px !important;
+        padding: 8px 15px !important;
+        border-radius: 20px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .breadcrumb {
+        padding: 8px 12px !important;
+        border-radius: 20px !important;
+        font-size: 12px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .related-products {
+        padding: 15px !important;
+        border-radius: 8px !important;
+        margin-top: 20px !important;
+    }
+    
+    .related-products h4 {
+        font-size: 16px !important;
+        margin-bottom: 15px !important;
+        border-bottom: 2px solid #ffc107 !important;
+        padding-bottom: 8px !important;
+    }
+    
+    .related-products .card {
+        margin-bottom: 10px !important;
+        border-radius: 8px !important;
+    }
+    
+    .related-products .card-title {
+        font-size: 13px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .related-products .card-img-top {
+        height: 120px !important;
+    }
+    
+    .out-of-stock-alert {
+        padding: 15px !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+    }
+    
+    .row {
+        margin: 0 !important;
+    }
+    
+    .col-md-6 {
+        padding: 0 5px !important;
+    }
+    
+}
+
+@media(max-width:576px){
+    .product-detail-container {
+        padding: 15px;
+        margin: 5px;
+        border-radius: 8px;
+    }
+    
+    .product-image-container {
+        border-radius: 8px;
+        margin-bottom: 12px;
+        max-width: 400px;
+    }
+    
+    .product-image-container img {
+        max-height: 300px;
+    }
+    
+    .product-info h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    
+    .product-price {
+        font-size: 18px;
+        padding: 10px 15px;
+        border-radius: 25px;
+    }
+    
+    .stock-badge {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .category-badge {
+        font-size: 11px;
+        padding: 3px 8px;
+        border-radius: 10px;
+    }
+    
+    .description-box {
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+    
+    .seller-info {
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 12px;
+    }
+    
+    .add-to-cart-section {
+        padding: 12px;
+        border-radius: 8px;
+    }
+    
+    .quantity-input {
+        font-size: 12px;
+        padding: 6px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+    
+    .btn-add-cart {
+        font-size: 12px;
+        padding: 8px 15px;
+        border-radius: 25px;
+    }
+    
+    .btn-view-details {
+        font-size: 12px;
+        padding: 6px 12px;
+        border-radius: 15px;
+    }
+    
+    .related-products h4 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    
+    .related-products .card {
+        margin-bottom: 10px;
+    }
+    
+    .related-products .card-title {
+        font-size: 13px;
+    }
+    
+    .related-products .card-img-top {
+        height: 100px;
+    }
+}
+
+/* Tablet (769px - 992px) */
+@media(min-width:769px) and (max-width:992px) {
+    .product-detail-container {
+        padding: 25px !important;
+        margin: 15px !important;
+        border-radius: 13px !important;
+    }
+    
+    .product-image-container img {
+        height: 360px !important;
+    }
+    
+    .product-info h2 {
+        font-size: 24px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .product-price {
+        font-size: 26px !important;
+        padding: 15px 25px !important;
+        border-radius: 40px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .stock-badge {
+        font-size: 15px !important;
+        padding: 9px 20px !important;
+        border-radius: 22px !important;
+    }
+    
+    .description-box {
+        padding: 22px !important;
+        font-size: 15px !important;
+    }
+    
+    .seller-info {
+        padding: 22px !important;
+        font-size: 15px !important;
+    }
+    
+    .add-to-cart-section {
+        padding: 22px !important;
+        border-radius: 13px !important;
+    }
+    
+    .btn-add-cart {
+        font-size: 17px !important;
+        padding: 15px 30px !important;
+        border-radius: 40px !important;
+    }
+    
+    .btn-view-details {
+        font-size: 16px !important;
+        padding: 13px 25px !important;
+        border-radius: 35px !important;
+    }
+    
+    .related-products {
+        padding: 28px !important;
+        border-radius: 13px !important;
+    }
+    
+    .related-products h4 {
+        font-size: 22px !important;
+    }
+    
+    .related-products .card-img-top {
+        height: 200px !important;
+    }
+}
+
+/* Small Desktop (993px - 1200px) */
+@media(min-width:993px) and (max-width:1200px) {
+    .product-detail-container {
+        padding: 28px !important;
+        margin: 18px !important;
+        border-radius: 14px !important;
+    }
+    
+    .product-image-container img {
+        height: 380px !important;
+    }
+    
+    .product-info h2 {
+        font-size: 26px !important;
+        margin-bottom: 22px !important;
+    }
+    
+    .product-price {
+        font-size: 27px !important;
+        padding: 16px 28px !important;
+        border-radius: 45px !important;
+        margin-bottom: 22px !important;
+    }
+    
+    .stock-badge {
+        font-size: 16px !important;
+        padding: 10px 22px !important;
+        border-radius: 25px !important;
+    }
+    
+    .description-box {
+        padding: 24px !important;
+        font-size: 16px !important;
+    }
+    
+    .seller-info {
+        padding: 24px !important;
+        font-size: 16px !important;
+    }
+    
+    .add-to-cart-section {
+        padding: 24px !important;
+        border-radius: 14px !important;
+    }
+    
+    .btn-add-cart {
+        font-size: 18px !important;
+        padding: 16px 32px !important;
+        border-radius: 45px !important;
+    }
+    
+    .btn-view-details {
+        font-size: 17px !important;
+        padding: 14px 28px !important;
+        border-radius: 40px !important;
+    }
+    
+    .related-products {
+        padding: 30px !important;
+        border-radius: 14px !important;
+    }
+    
+    .related-products h4 {
+        font-size: 24px !important;
+    }
+    
+    .related-products .card-img-top {
+        height: 220px !important;
+    }
+}
+
+/* Large Desktop (1201px+) */
+@media(min-width:1201px) {
+    .product-detail-container {
+        padding: 30px !important;
+        margin: 20px !important;
+        border-radius: 15px !important;
+    }
+    
+    .product-image-container img {
+        height: 400px !important;
+    }
+    
+    .product-info h2 {
+        font-size: 28px !important;
+        margin-bottom: 25px !important;
+    }
+    
+    .product-price {
+        font-size: 28px !important;
+        padding: 18px 30px !important;
+        border-radius: 50px !important;
+        margin-bottom: 25px !important;
+    }
+    
+    .stock-badge {
+        font-size: 17px !important;
+        padding: 11px 25px !important;
+        border-radius: 28px !important;
+    }
+    
+    .description-box {
+        padding: 25px !important;
+        font-size: 16px !important;
+    }
+    
+    .seller-info {
+        padding: 25px !important;
+        font-size: 16px !important;
+    }
+    
+    .add-to-cart-section {
+        padding: 25px !important;
+        border-radius: 15px !important;
+    }
+    
+    .btn-add-cart {
+        font-size: 19px !important;
+        padding: 18px 35px !important;
+        border-radius: 50px !important;
+    }
+    
+    .btn-view-details {
+        font-size: 18px !important;
+        padding: 15px 30px !important;
+        border-radius: 45px !important;
+    }
+    
+    .related-products {
+        padding: 32px !important;
+        border-radius: 15px !important;
+    }
+    
+    .related-products h4 {
+        font-size: 26px !important;
+    }
+    
+    .related-products .card-img-top {
+        height: 240px !important;
+    }
+}
+
+/* Landscape mode fixes */
+@media(max-height:600px) and (orientation:landscape) {
+    .product-image-container img {
+        height: 200px !important;
+    }
+    
+    .product-detail-container {
+        padding: 15px !important;
+    }
+    
+    .product-info h2 {
+        font-size: 18px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .product-price {
+        font-size: 18px !important;
+        padding: 8px 15px !important;
+    }
+}
+
+/* High DPI displays */
+@media(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .product-detail-container {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08) !important;
+    }
+    
+    .product-image-container {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12) !important;
+    }
+    
+    .related-products {
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08) !important;
+    }
+}
+</style>
+<script>
+function validateStock(form, maxStock) {
+    const qty = parseInt(form.qty.value);
+    if (qty > maxStock) {
+        alert('Only ' + maxStock + ' items available in stock');
+        return false;
+    }
+    if (qty < 1) {
+        alert('Quantity must be at least 1');
+        return false;
+    }
+    return true;
+}
+
+function addToCart(productId, qty) {
+    const formData = new FormData();
+    formData.append('product_id', productId);
+    formData.append('qty', qty);
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    fetch(window.location.href, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart count in navbar
+            const cartCountElement = document.querySelector('.cart-count');
+            if (cartCountElement) {
+                cartCountElement.textContent = data.cart_count;
+            }
+            
+            // Show success message
+            showNotification('Product added to cart successfully!', 'success');
+            
+            // Reset quantity input
+            document.getElementById('qty_' + productId).value = 1;
+        } else {
+            // Show error message
+            showNotification(data.message || 'Failed to add product to cart', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('An error occurred. Please try again.', 'error');
+    });
+    
+    return false;
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+</script>
+
+<div class="container mt-5">
+    <div class="product-detail-container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'store' %}">All Products</a></li>
+                {% if product.category %}
+                <li class="breadcrumb-item"><a href="{% url 'product' product.category.id %}">{{ product.category.name }}</a></li>
+                {% endif %}
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <!-- Product Details -->
+        <div class="row">
+            <!-- Product Image -->
+            <div class="col-md-6 mb-4">
+                <div class="product-image-container">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="{% static 'images/default.jpg' %}" class="card-img-top" alt="{{ product.name }}">
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="col-md-6 product-info">
+                <h2>{{ product.name }}</h2>
+                
+                <!-- Category -->
+                {% if product.category %}
+                <p class="mb-3">
+                    <i class="bi bi-tag"></i> Category: <span class="category-badge">{{ product.category.name }}</span>
+                </p>
+                {% endif %}
+
+                <!-- Price -->
+                <div class="mb-4">
+                    <span class="product-price">₹ {{ product.price }}</span>
+                </div>
+
+                <!-- Stock Status -->
+                {% if product.stock > 0 %}
+                <div class="mb-4">
+                    <span class="stock-badge">
+                        <i class="bi bi-check-circle-fill"></i> In Stock: {{ product.stock }} units available
+                    </span>
+                </div>
+            {% else %}
+            <p class="text-danger mb-3">
+                <i class="bi bi-x-circle-fill"></i> Out of Stock
+            </p>
+            {% endif %}
+
+            <!-- Description -->
+            <div class="mb-4">
+                <h5>Description</h5>
+                <div class="description-box">
+                    <p class="mb-0">{{ product.description }}</p>
+                </div>
+            </div>
+
+            <!-- Seller Info -->
+            {% if product.seller %}
+            <div class="mb-4">
+                <h5>Seller Information</h5>
+                <div class="seller-info">
+                    <p class="mb-2">
+                        <i class="bi bi-shop"></i> {{ product.seller.business_name }}
+                    </p>
+                    <p class="mb-0">
+                        <i class="bi bi-geo-alt"></i> {{ product.seller.city }}, {{ product.seller.state }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Add to Cart / Out of Stock -->
+            {% if product.stock > 0 %}
+            {% if request.session.login %}
+            <div class="add-to-cart-section">
+                <form onsubmit="return addToCart('{{ product.id }}', document.getElementById('qty_{{ product.id }}').value)">
+                    {% csrf_token %}
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label for="qty_{{ product.id }}" class="form-label fw-bold">Quantity:</label>
+                            <input type="number" id="qty_{{ product.id }}" min="1" max="{{ product.stock }}" value="1" class="form-control quantity-input" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-8">
+                            <button class="btn btn-add-cart w-100" type="submit">
+                                <i class="bi bi-cart-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% else %}
+            <div class="add-to-cart-section">
+                <div class="text-center">
+                    <i class="bi bi-person-circle" style="font-size: 48px; color: #ffc107; margin-bottom: 15px;"></i>
+                    <h5 class="mb-3">Please Login to Add to Cart</h5>
+                    <p class="text-muted mb-4">Login to your account to add this product to your cart and continue shopping.</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <a href="{% url 'login' %}" class="btn btn-add-cart w-100">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                            </a>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <a href="{% url 'register' %}" class="btn btn-view-details w-100">
+                                <i class="bi bi-person-plus me-2"></i>Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="out-of-stock-alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                This product is currently out of stock.
+                <p class="small mb-0 mt-2">
+                    <i class="bi bi-bell"></i> 
+                    <a href="#" onclick="alert('Feature coming soon! You will be notified when this product is back in stock.')" class="text-decoration-none text-white">Notify me when available</a>
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div class="mt-4">
+                <a href="{% url 'store' %}" class="btn btn-view-details me-2">
+                    <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                </a>
+                <a href="{% url 'cart' %}" class="btn btn-view-details">
+                    <i class="bi bi-cart me-2"></i>View Cart
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="related-products">
+        <h4>Related Products</h4>
+        <div class="row g-4">
+            {% for related in related_products %}
+            <div class="col-lg-3 col-md-6">
+                <div class="card h-100 shadow-sm product-card">
+                    {% if related.image %}
+                    <a href="{% url 'productdetail' related.id %}">
+                        <img src="{{ related.image.url }}" class="card-img-top product-img" style="height:200px; object-fit:cover;">
+                    </a>
+                    {% else %}
+                    <a href="{% url 'productdetail' related.id %}">
+                        <img src="{% static 'images/default.jpg' %}" class="card-img-top product-img" style="height:200px; object-fit:cover;">
+                    </a>
+                    {% endif %}
+
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold">
+                            <a href="{% url 'productdetail' related.id %}" class="text-decoration-none text-dark">{{ related.name }}</a>
+                        </h5>
+                        <h5 class="text-success fw-bold">₹ {{ related.price }}</h5>
+                        {% if related.stock > 0 %}
+                        <p class="small text-success">
+                            <i class="bi bi-check-circle-fill"></i> In Stock
+                        </p>
+                        {% else %}
+                        <p class="small text-danger">
+                            <i class="bi bi-x-circle-fill"></i> Out of Stock
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}

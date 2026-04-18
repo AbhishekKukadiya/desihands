@@ -1,0 +1,341 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+.edit-product-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+    color: #000;
+}
+
+.image-preview {
+    border: 2px dashed #ced4da;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    transition: border-color 0.3s ease;
+}
+
+.image-preview:hover {
+    border-color: #ffc107;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+}
+
+.header-section {
+    background: linear-gradient(135deg, #ffc107, #ff8c00);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px 12px 0 0;
+    margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.required-star {
+    color: #dc3545;
+}
+
+.help-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.current-image {
+    position: relative;
+    display: inline-block;
+}
+
+.current-image img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.change-image-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.change-image-btn:hover {
+    background: rgba(0,0,0,0.9);
+}
+</style>
+
+<div class="container py-5">
+    <div class="edit-product-container p-4">
+        
+        <!-- Header -->
+        <div class="header-section">
+            <div class="text-center">
+                <h3 class="mb-2">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Product
+                </h3>
+                <p class="mb-0 opacity-75">
+                    Update your product information and settings
+                </p>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+                <!-- Product Name -->
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">
+                        Product Name <span class="required-star">*</span>
+                    </label>
+                    <input type="text" 
+                           name="name" 
+                           class="form-control" 
+                           id="name"
+                           value="{{ product.name }}"
+                           required
+                           placeholder="Enter product name">
+                    <div class="help-text">Give your product a clear, descriptive name</div>
+                </div>
+
+                <!-- Price -->
+                <div class="col-md-6 mb-3">
+                    <label for="price" class="form-label">
+                        Price (₹) <span class="required-star">*</span>
+                    </label>
+                    <input type="number" 
+                           name="price" 
+                           class="form-control" 
+                           id="price"
+                           value="{{ product.price }}"
+                           required
+                           min="0"
+                           step="0.01"
+                           placeholder="0.00">
+                    <div class="help-text">Set a competitive price for your product</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Category -->
+                <div class="col-md-6 mb-3">
+                    <label for="category" class="form-label">
+                        Category <span class="required-star">*</span>
+                    </label>
+                    <select name="category" class="form-control" id="category" required>
+                        <option value="">Select a category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if cat.id == product.category.id %}selected{% endif %}>{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="help-text">Choose the best category for your product</div>
+                </div>
+
+                <!-- Stock -->
+                <div class="col-md-6 mb-3">
+                    <label for="stock" class="form-label">
+                        Stock Quantity <span class="required-star">*</span>
+                    </label>
+                    <input type="number" 
+                           name="stock" 
+                           class="form-control" 
+                           id="stock"
+                           value="{{ product.stock }}"
+                           required
+                           min="0"
+                           placeholder="0">
+                    <div class="help-text">How many items do you have in stock?</div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <label for="description" class="form-label">
+                    Product Description <span class="required-star">*</span>
+                </label>
+                <textarea name="description" 
+                          class="form-control" 
+                          id="description"
+                          rows="4" 
+                          required
+                          placeholder="Describe your product in detail...">{{ product.description }}</textarea>
+                <div class="help-text">Include materials, dimensions, care instructions, etc.</div>
+            </div>
+
+            <!-- Product Image -->
+            <div class="mb-4">
+                <label class="form-label">
+                    Product Image
+                </label>
+                
+                <!-- Current Image -->
+                {% if product.image %}
+                <div class="mb-3">
+                    <label class="form-label text-muted small">Current Image:</label>
+                    <div class="current-image">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        <button type="button" class="change-image-btn" onclick="document.getElementById('image').click()">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="image-preview" id="imagePreview">
+                    <div class="preview-placeholder">
+                        <i class="bi bi-cloud-upload fs-1 text-muted mb-2"></i>
+                        <p class="mb-0 text-muted">Click to change product image</p>
+                        <small class="text-muted">Recommended: 800x800px, Max size: 5MB</small>
+                    </div>
+                    <img id="previewImg" src="" alt="Product preview">
+                </div>
+                <input type="file" 
+                       name="image" 
+                       class="form-control d-none" 
+                       id="image"
+                       accept="image/*">
+                <div class="help-text">Upload clear, high-quality images of your product (optional)</div>
+            </div>
+
+            <!-- Product Status -->
+            <div class="mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" {% if product.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                        Product is active (visible to customers)
+                    </label>
+                </div>
+                <div class="help-text">Uncheck to temporarily hide this product from customers</div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'seller_dashboard' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                </a>
+                <div>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-check-circle me-2"></i>Update Product
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.getElementById('image');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const placeholder = imagePreview.querySelector('.preview-placeholder');
+
+    // Click to upload
+    imagePreview.addEventListener('click', function() {
+        imageInput.click();
+    });
+
+    // Image preview
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Check file size (5MB limit)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size should be less than 5MB');
+                imageInput.value = '';
+                return;
+            }
+
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                imageInput.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const price = parseFloat(document.getElementById('price').value);
+        const stock = parseInt(document.getElementById('stock').value);
+
+        if (price < 0) {
+            e.preventDefault();
+            alert('Price cannot be negative');
+            return;
+        }
+
+        if (stock < 0) {
+            e.preventDefault();
+            alert('Stock cannot be negative');
+            return;
+        }
+    });
+});
+</script>
+
+{% endblock %}

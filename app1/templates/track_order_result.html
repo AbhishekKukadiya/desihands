@@ -1,0 +1,700 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<style>
+  .track-result-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    margin: 40px auto;
+    overflow: hidden;
+    border: 2px solid #111;
+  }
+
+  .track-result-header {
+    background: linear-gradient(45deg, #111, #333);
+    color: white;
+    padding: 30px;
+    position: relative;
+  }
+
+  .track-result-header::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39, #ffc107);
+  }
+
+  .order-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .order-id {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffc107;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .order-date-time {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .order-status {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .status-pending {
+    background: #ffc107;
+    color: #111;
+  }
+
+  .status-confirmed {
+    background: #17a2b8;
+    color: white;
+  }
+
+  .status-shipped {
+    background: #007bff;
+    color: white;
+  }
+
+  .status-delivered {
+    background: #28a745;
+    color: white;
+  }
+
+  .status-cancelled {
+    background: #dc3545;
+    color: white;
+  }
+
+  .track-result-body {
+    padding: 40px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  }
+
+  /* Timeline Styles */
+  .timeline {
+    position: relative;
+    padding: 20px 0;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e9ecef;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-left: 70px;
+    margin-bottom: 30px;
+  }
+
+  .timeline-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border: 3px solid #e9ecef;
+    z-index: 1;
+  }
+
+  .timeline-item.completed .timeline-icon {
+    background: #28a745;
+    color: white;
+    border-color: #28a745;
+  }
+
+  .timeline-item.pending .timeline-icon {
+    background: #ffc107;
+    color: #111;
+    border-color: #ffc107;
+  }
+
+  .timeline-content {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 20px;
+    border-left: 4px solid #e9ecef;
+  }
+
+  .timeline-item.completed .timeline-content {
+    border-left-color: #28a745;
+  }
+
+  .timeline-item.pending .timeline-content {
+    border-left-color: #ffc107;
+  }
+
+  .timeline-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 8px;
+  }
+
+  .timeline-description {
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .timeline-date {
+    color: #999;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Order Details */
+  .order-details {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 30px;
+    margin-top: 40px;
+  }
+
+  .order-details h3 {
+    color: #111;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ffc107;
+    font-size: 20px;
+  }
+
+  .order-items {
+    margin-bottom: 20px;
+  }
+
+  .order-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+
+  .order-item:last-child {
+    border-bottom: none;
+  }
+
+  .item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 15px;
+  }
+
+  .item-details {
+    flex: 1;
+  }
+
+  .item-name {
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 5px;
+  }
+
+  .item-quantity {
+    color: #666;
+    font-size: 14px;
+  }
+
+  .item-price {
+    font-weight: 600;
+    color: #111;
+    font-size: 16px;
+  }
+
+  /* Enhanced Info Cards */
+  .info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .info-card h4 {
+    color: #111;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .info-card p {
+    color: #666;
+    margin-bottom: 8px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .info-card p strong {
+    color: #111;
+    min-width: 100px;
+  }
+
+  /* Payment Info */
+  .payment-info {
+    background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    border-left: 4px solid #28a745;
+  }
+
+  .payment-info h4 {
+    color: #111;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+
+  .payment-status {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 10px;
+  }
+
+  .payment-paid {
+    background: #d4edda;
+    color: #155724;
+  }
+
+  .payment-pending {
+    background: #fff3cd;
+    color: #856404;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .track-again-btn {
+    background: linear-gradient(45deg, #ffc107, #ffca2c);
+    color: #111;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .track-again-btn:hover {
+    background: linear-gradient(45deg, #ffca2c, #ffc107);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 193, 7, 0.3);
+    color: #111;
+    text-decoration: none;
+  }
+
+  .download-btn {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .download-btn:hover {
+    background: linear-gradient(45deg, #0056b3, #004085);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 123, 255, 0.3);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .track-result-container {
+      margin: 20px 10px;
+      border-radius: 10px;
+    }
+
+    .track-result-header {
+      padding: 20px;
+    }
+
+    .order-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .order-id {
+      font-size: 20px;
+    }
+
+    .track-result-body {
+      padding: 30px 20px;
+    }
+
+    .timeline::before {
+      left: 20px;
+    }
+
+    .timeline-item {
+      padding-left: 50px;
+    }
+
+    .timeline-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+
+    .timeline-content {
+      padding: 15px;
+    }
+
+    .timeline-title {
+      font-size: 16px;
+    }
+
+    .order-details {
+      padding: 20px;
+    }
+
+    .item-image {
+      width: 50px;
+      height: 50px;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .track-again-btn,
+    .download-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .track-result-container {
+      margin: 15px 5px;
+      border-radius: 8px;
+    }
+
+    .track-result-header {
+      padding: 15px;
+    }
+
+    .order-id {
+      font-size: 18px;
+    }
+
+    .track-result-body {
+      padding: 20px 15px;
+    }
+
+    .timeline::before {
+      left: 15px;
+    }
+
+    .timeline-item {
+      padding-left: 40px;
+      margin-bottom: 20px;
+    }
+
+    .timeline-icon {
+      width: 30px;
+      height: 30px;
+      font-size: 14px;
+    }
+
+    .timeline-content {
+      padding: 12px;
+    }
+
+    .timeline-title {
+      font-size: 14px;
+    }
+
+    .timeline-description {
+      font-size: 13px;
+    }
+
+    .timeline-date {
+      font-size: 12px;
+    }
+
+    .order-details {
+      padding: 15px;
+    }
+
+    .order-details h3 {
+      font-size: 18px;
+    }
+
+    .item-image {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .item-name {
+      font-size: 14px;
+    }
+
+    .item-quantity {
+      font-size: 12px;
+    }
+
+    .item-price {
+      font-size: 14px;
+    }
+
+    .info-card {
+      padding: 15px;
+    }
+
+    .info-card h4 {
+      font-size: 14px;
+    }
+
+    .info-card p {
+      font-size: 13px;
+    }
+
+    .payment-info {
+      padding: 15px;
+    }
+
+    .payment-info h4 {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="track-result-container">
+  <div class="track-result-card">
+    <!-- Header -->
+    <div class="track-result-header">
+      <div class="order-info">
+        <div>
+          <div class="order-id">
+            <i class="bi bi-box-seam me-2"></i>
+            Order #{{ order.id }}
+          </div>
+          <div class="order-date-time">
+            <i class="bi bi-calendar me-1"></i>
+            Placed on {{ order.order_date|date:"d M Y, h:i A" }}
+          </div>
+        </div>
+        <div class="order-status status-{{ order.status }}">
+          <i class="bi bi-flag me-1"></i>
+          {{ order.status|title }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="track-result-body">
+      <!-- Timeline -->
+      <div class="timeline">
+        {% for event in timeline %}
+        <div class="timeline-item {{ event.status }}">
+          <div class="timeline-icon">
+            <i class="bi {{ event.icon }}"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">{{ event.title }}</div>
+            <div class="timeline-description">{{ event.description }}</div>
+            <div class="timeline-date">
+              <i class="bi bi-clock"></i>
+              {{ event.date }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Order Details -->
+      <div class="order-details">
+        <h3>
+          <i class="bi bi-box-seam me-2"></i>
+          Order Details
+        </h3>
+
+        <div class="order-items">
+          {% for item in order_items %}
+          <div class="order-item">
+            {% if item.product.image %}
+            <img
+              src="{{ item.product.image.url }}"
+              alt="{{ item.product.name }}"
+              class="item-image"
+            />
+            {% else %}
+            <div
+              class="item-image bg-light d-flex align-items-center justify-content-center"
+            >
+              <i class="bi bi-image text-muted"></i>
+            </div>
+            {% endif %}
+            <div class="item-details">
+              <div class="item-name">{{ item.product.name }}</div>
+              <div class="item-quantity">
+                <i class="bi bi-hash me-1"></i>
+                Quantity: {{ item.quantity }}
+              </div>
+              <div class="item-quantity">
+                <i class="bi bi-tag me-1"></i>
+                Price per item: ₹{{ item.price|floatformat:2 }}
+              </div>
+            </div>
+            <div class="item-price">₹{{ item.total_price|floatformat:2 }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="info-card">
+              <h4>
+                <i class="bi bi-geo-alt"></i>
+                Delivery Address
+              </h4>
+              <p>
+                <strong>Name:</strong> {{ order.user.username|default:"N/A" }}
+              </p>
+              <p>
+                <strong>Full Address:</strong> {% if order.shipping_address %}{{ order.shipping_address }}<br />{{ order.city|default:"" }}, {{ order.state|default:"" }} - {{ order.pincode|default:"" }}{% else %}{{ order.user.address|default:"N/A" }}<br />{{ order.user.city|default:"" }}, {{ order.user.state|default:"" }} - {{ order.user.pincode|default:"" }}{% endif %}
+              </p>
+              <p>
+                <strong>Phone:</strong> {{ order.phone|default:order.user.phone|default:"N/A" }}
+              </p>
+              <p>
+                <strong>Email:</strong> {{ order.email|default:order.user.email|default:"N/A" }}
+              </p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="info-card">
+              <h4>
+                <i class="bi bi-info-circle"></i>
+                Order Information
+              </h4>
+              <p><strong>Order ID:</strong> #{{ order.id }}</p>
+              <p>
+                <strong>Total Amount:</strong> ₹{{ order.total_amount|floatformat:2 }}
+              </p>
+              <p>
+                <strong>Order Date:</strong> {{ order.order_date|date:"d M Y, h:i A" }}
+              </p>
+              <p><strong>Order Status:</strong> {{ order.status|title }}</p>
+              <p>
+                <strong>Payment Method:</strong>
+                {% if payment_info %}{{ payment_info.payment_method|title }}{% elif order.payment_status == 'paid' %}Online Payment{% else %}Cash on Delivery{% endif %}
+              </p>
+              {% if shipping_info %}
+              <p><strong>Courier:</strong> {{ shipping_info.courier_name }}</p>
+              <p>
+                <strong>Tracking Number:</strong> {{ shipping_info.tracking_number }}
+              </p>
+              {% endif %}
+              {% if expected_delivery %}
+              <p>
+                <strong>Expected Delivery:</strong> {{ expected_delivery|date:"d M Y" }}
+              </p>
+              {% else %}
+              <p><strong>Expected Delivery:</strong> 5-7 business days</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="payment-info">
+          <h4>
+            <i class="bi bi-credit-card"></i>
+            Payment Information
+          </h4>
+          <p>
+            <strong>Payment Status:</strong>
+            {% if order.payment_status == 'paid' %}
+            <span class="payment-status payment-paid">
+              <i class="bi bi-check-circle me-1"></i>
+              Paid
+            </span>
+            {% else %}
+            <span class="payment-status payment-pending">
+              <i class="bi bi-clock me-1"></i>
+              Pending
+            </span>
+            {% endif %}
+          </p>
+          {% if payment_info %}
+          <p>
+            <strong>Transaction ID:</strong> {{ payment_info.transaction_id|default:"Not Available" }}
+          </p>
+          <p>
+            <strong>Payment Date:</strong> {% if payment_info.payment_date %}{{ payment_info.payment_date|date:"d M Y, h:i A" }}{% else %}Not Processed{% endif %}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <a href="{% url 'track_order' %}" class="track-again-btn">
+            <i class="bi bi-search"></i>
+            Track Another Order
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

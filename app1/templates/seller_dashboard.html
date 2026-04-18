@@ -1,0 +1,383 @@
+{% extends 'base.html' %} {% block content %}
+
+<style>
+  .dashboard-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    height: 100%;
+    background: white;
+  }
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  .stat-card {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+  .quick-action {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s ease;
+  }
+  .quick-action:hover {
+    transform: translateX(5px);
+    color: white;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+  }
+  .welcome-header {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffc107, #ff9800, #ffc107);
+  }
+  .action-btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid #ffc107;
+    background: white;
+    color: #333;
+  }
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+    background: #ffc107;
+    color: white;
+  }
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  .table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #dee2e6;
+  }
+  .table {
+    margin-bottom: 0;
+  }
+  .table th {
+    background: #ffc107;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding: 12px 8px;
+    color: white;
+  }
+  .table td {
+    vertical-align: middle;
+    padding: 12px 8px;
+    border-bottom: 1px solid #f1f3f4;
+  }
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .order-status-pending { background: #ffc107; color: #000; }
+  .order-status-confirmed { background: #17a2b8; color: #fff; }
+  .order-status-shipped { background: #007bff; color: #fff; }
+  .order-status-delivered { background: #28a745; color: #fff; }
+  .order-status-cancelled { background: #dc3545; color: #fff; }
+</style>
+
+<div class="container mt-4">
+  <!-- Welcome Header -->
+  <div class="welcome-header">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h2 class="mb-2">
+          <i class="bi bi-shop me-2"></i>Welcome back, {{ seller.business_name }}!
+        </h2>
+        <p class="mb-0 opacity-75">
+          Manage your products, track orders, and grow your business on Desi Hands
+        </p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="mt-3 mt-md-0">
+          <span class="badge bg-success fs-6 p-2">
+            <i class="bi bi-check-circle me-1"></i>{{ seller.email }}
+          </span>
+          {% if seller.is_approved %}
+          <span class="badge bg-info fs-6 p-2 ms-2">
+            <i class="bi bi-patch-check me-1"></i>Approved
+          </span>
+          {% else %}
+          <span class="badge bg-warning fs-6 p-2 ms-2">
+            <i class="bi bi-clock me-1"></i>Pending Approval
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="stat-card">
+        <div class="stat-number">{{ total_products }}</div>
+        <div class="stat-label">Total Products</div>
+        <i class="bi bi-box fs-1 opacity-25 position-absolute top-0 end-0 m-3"></i>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)">
+        <div class="stat-number">₹{{ total_revenue|floatformat:0 }}</div>
+        <div class="stat-label">Total Revenue</div>
+        <i class="bi bi-currency-rupee fs-1 opacity-25 position-absolute top-0 end-0 m-3"></i>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%)">
+        <div class="stat-number">{{ total_orders }}</div>
+        <div class="stat-label">Total Orders</div>
+        <i class="bi bi-box-seam fs-1 opacity-25 position-absolute top-0 end-0 m-3"></i>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%)">
+        <div class="stat-number">{{ customer_orders|length }}</div>
+        <div class="stat-label">Customer Orders</div>
+        <i class="bi bi-people fs-1 opacity-25 position-absolute top-0 end-0 m-3"></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Quick Actions -->
+    <div class="col-lg-4 mb-4">
+      <div class="card dashboard-card h-100">
+        <div class="card-body">
+          <h5 class="section-title">
+            <i class="bi bi-lightning-charge text-warning me-2"></i>Quick Actions
+          </h5>
+          <div class="d-grid gap-2">
+            <a href="{% url 'add_product' %}" class="quick-action">
+              <i class="bi bi-plus-circle me-2"></i>Add New Product
+            </a>
+            <a href="{% url 'seller_dashboard' %}" class="quick-action" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+              <i class="bi bi-box-seam me-2"></i>Manage Products
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Store Info -->
+    <div class="col-lg-4 mb-4">
+      <div class="card dashboard-card h-100">
+        <div class="card-body">
+          <h5 class="section-title">
+            <i class="bi bi-info-circle text-success me-2"></i>Store Information
+          </h5>
+          <div class="mb-3">
+            <label class="text-muted small">Business Name</label>
+            <p class="mb-1 fw-bold">{{ seller.business_name }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="text-muted small">Email</label>
+            <p class="mb-1">{{ seller.email }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="text-muted small">Phone</label>
+            <p class="mb-1">{{ seller.phone }}</p>
+          </div>
+          <div class="mb-3">
+            <label class="text-muted small">Location</label>
+            <p class="mb-1">{{ seller.city }}, {{ seller.state }}</p>
+          </div>
+          <div class="d-grid gap-2">
+            <button class="btn btn-outline-primary action-btn w-100">
+              <i class="bi bi-pencil me-1"></i>Edit Store Info
+            </button>
+            <button class="btn btn-outline-secondary action-btn w-100">
+              <i class="bi bi-gear me-1"></i>Store Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Orders Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card dashboard-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="section-title">
+              <i class="bi bi-box-seam text-info me-2"></i>Customer Orders
+            </h5>
+            <span class="badge bg-info fs-6 p-2">{{ customer_orders.count }}</span>
+          </div>
+          {% if customer_orders %}
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Total Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in customer_orders %}
+                <tr>
+                  <td><strong>#{{ order.id }}</strong></td>
+                  <td>{{ order.user.username }}</td>
+                  <td>₹{{ order.total_amount|floatformat:2 }}</td>
+                  <td>
+                    <span class="badge order-status-{{ order.status }}">
+                      {{ order.status|title }}
+                    </span>
+                  </td>
+                  <td>{{ order.order_date|date:"d M Y, h:i A" }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <i class="bi bi-box fs-1 text-muted mb-3"></i>
+            <p class="text-muted">No customer orders yet</p>
+            <small class="text-muted">Orders for your products will appear here</small>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Products Preview -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card dashboard-card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="section-title">
+              <i class="bi bi-box text-primary me-2"></i>Your Products
+            </h5>
+            <a href="{% url 'add_product' %}" class="btn btn-warning btn-sm">
+              <i class="bi bi-plus-circle me-1"></i>Add Product
+            </a>
+          </div>
+          {% if products %}
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in products %}
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      {% if product.image %}
+                      <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;" class="me-3">
+                      {% else %}
+                      <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px">
+                        <i class="bi bi-image text-muted"></i>
+                      </div>
+                      {% endif %}
+                      <div>
+                        <div class="fw-bold">{{ product.name }}</div>
+                        <small class="text-muted">{{ product.category.name }}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>₹{{ product.price|floatformat:2 }}</td>
+                  <td>
+                    <span class="badge {% if product.stock > 10 %}bg-success{% elif product.stock > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                      {{ product.stock }} in stock
+                    </span>
+                  </td>
+                  <td>
+                    {% if product.is_active %}
+                    <span class="badge bg-success">Active</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div class="btn-group btn-group-sm">
+                      <a href="{% url 'edit_product' product.id %}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'toggle_product_status' product.id %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-{% if product.is_active %}pause{% else %}play{% endif %}"></i>
+                      </a>
+                      <a href="{% url 'delete_product' product.id %}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?')">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <i class="bi bi-box fs-1 text-muted mb-3"></i>
+            <p class="text-muted">No products listed yet</p>
+            <small class="text-muted">Start adding your handmade products to showcase them to customers</small>
+            <div class="mt-3">
+              <a href="{% url 'add_product' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Add Your First Product
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

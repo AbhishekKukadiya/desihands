@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+
+{% block content %}
+
+<script>
+
+function validateStock(form, maxStock) {
+
+    const qty = parseInt(form.qty.value);
+
+    if (qty > maxStock) {
+
+        alert('Only ' + maxStock + ' items available in stock');
+
+        return false;
+
+    }
+
+    if (qty < 1) {
+
+        alert('Quantity must be at least 1');
+
+        return false;
+
+    }
+
+    return true;
+
+}
+
+
+
+function addToCart(productId, qty) {
+
+    const formData = new FormData();
+
+    formData.append('product_id', productId);
+
+    formData.append('qty', qty);
+
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+
+    
+
+    fetch('', {
+
+        method: 'POST',
+
+        body: formData,
+
+        headers: {
+
+            'X-Requested-With': 'XMLHttpRequest'
+
+        }
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (data.success) {
+
+            // Update cart count in navbar
+
+            const cartCountElement = document.querySelector('.cart-count');
+
+            if (cartCountElement) {
+
+                cartCountElement.textContent = data.cart_count;
+
+            }
+
+            
+
+            // Show success message
+
+            showNotification('Product added to cart successfully!', 'success');
+
+            
+
+            // Reset quantity input
+
+            document.getElementById('qty_' + productId).value = 1;
+
+        } else {
+
+            // Show error message
+
+            showNotification(data.message || 'Failed to add product to cart', 'error');
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error('Error:', error);
+
+        showNotification('An error occurred. Please try again.', 'error');
+
+    });
+
+    
+
+    return false;
+
+}
+
+
+
+function showNotification(message, type) {
+
+    const notification = document.createElement('div');
+
+    notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+
+    notification.innerHTML = `
+
+        ${message}
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+    `;
+
+    
+
+    document.body.appendChild(notification);
+
+    
+
+    // Auto-remove after 3 seconds
+
+    setTimeout(() => {
+
+        if (notification.parentNode) {
+
+            notification.parentNode.removeChild(notification);
+
+        }
+
+    }, 3000);
+
+}
+
+</script>
+
+
+
+<div class="container mt-5">
+
+
+
+    <!-- Display search query if exists -->
+
+    {% if search_query %}
+
+    <div class="mb-4 text-center">
+
+        <h4>Search results for "<span class="text-warning">{{ search_query }}</span>"</h4>
+
+    </div>
+
+    {% endif %}
+
+
+
+    <!-- Message -->
+
+    {% if msg %}
+
+    <div class="alert alert-danger text-center">
+
+        {{ msg }}
+
+    </div>
+
+    {% endif %}
+
+
+
+    <!-- Products Grid -->
+
+    <div class="row g-4">
+
+        {% for p in products %}
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card h-100 shadow-sm product-card">
+
+
+
+                <!-- Product Image (Clickable) -->
+
+                {% if p.image %}
+
+                <a href="{% url 'productdetail' p.id %}">
+
+                    <img src="{{ p.image.url }}" class="card-img-top product-img" style="height:200px; object-fit:cover;">
+
+                </a>
+
+                {% else %}
+
+                <a href="{% url 'productdetail' p.id %}">
+
+                    <img src="{% static 'images/default.jpg' %}" class="card-img-top product-img" style="height:200px; object-fit:cover;">
+
+                </a>
+
+                {% endif %}
+
+
+
+                <div class="card-body text-center">
+
+
+
+                    <!-- Product Name (Clickable) -->
+
+                    <h5 class="card-title fw-bold">
+
+                        <a href="{% url 'productdetail' p.id %}" class="text-decoration-none text-dark">{{ p.name }}</a>
+
+                    </h5>
+
+
+
+                    <!-- Price -->
+
+                    <h5 class="text-success fw-bold">₹ {{ p.price }}</h5>
+
+
+
+                    <!-- View Details Button -->
+
+                    <a href="{% url 'productdetail' p.id %}" class="btn btn-outline-dark w-100">
+
+                        <i class="bi bi-eye me-2"></i>View Details
+
+                    </a>
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="text-center col-12">
+
+            <h4>No Products Available</h4>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+
+
+{% endblock %}

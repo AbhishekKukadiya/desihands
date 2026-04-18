@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+body{
+background:#f5f6fa;
+}
+
+/* LOGIN CONTAINER */
+
+.auth-container{
+background:white;
+border-radius:16px;
+box-shadow:0 20px 50px rgba(0,0,0,0.15);
+max-width:650px;
+margin:80px auto;
+overflow:hidden;
+}
+
+/* HEADER */
+
+.auth-header{
+background:#212529;
+color:#ffc107;
+padding:40px;
+text-align:center;
+}
+
+.auth-header h3{
+font-weight:700;
+font-size:28px;
+}
+
+/* BODY */
+
+.auth-body{
+padding:40px;
+}
+
+/* INPUT */
+
+.form-control{
+border-radius:10px;
+border:2px solid #eee;
+padding:12px;
+font-size:16px;
+transition:0.3s;
+}
+
+.form-control:focus{
+border-color:#ffc107;
+box-shadow:0 0 0 0.2rem rgba(255,193,7,0.25);
+}
+
+/* BUTTON */
+
+.btn-warning{
+background:#ffc107;
+border:none;
+color:black;
+font-weight:600;
+font-size:18px;
+padding:12px;
+}
+
+.btn-warning:hover{
+background:#e0a800;
+transform:translateY(-2px);
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* LINKS */
+
+.login-links a{
+color:#212529;
+font-weight:600;
+text-decoration:none;
+}
+
+.login-links a:hover{
+color:#ffc107;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.auth-container{
+margin:30px 15px;
+}
+
+.auth-body{
+padding:25px;
+}
+
+}
+
+</style>
+
+<div class="container">
+
+<div class="auth-container">
+
+<!-- HEADER -->
+
+<div class="auth-header">
+
+<h3>
+<i class="bi bi-person-badge me-2"></i>
+Seller Login
+</h3>
+
+<p class="mb-0 text-light">
+Access your seller dashboard
+</p>
+
+</div>
+
+<!-- BODY -->
+
+<div class="auth-body">
+
+<!-- DJANGO MESSAGES -->
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show">
+
+{{message}}
+
+<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+</div>
+{% endfor %}
+{% endif %}
+
+<form method="POST">
+
+{% csrf_token %}
+
+<div class="mb-4">
+
+<label class="form-label fw-semibold">Email Address</label>
+
+<input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+
+</div>
+
+<div class="mb-4">
+
+<label class="form-label fw-semibold">Password</label>
+
+<input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+
+</div>
+
+<button type="submit" class="btn btn-warning w-100">
+
+Login as Seller
+
+</button>
+
+</form>
+
+<!-- LINKS -->
+
+<div class="text-center mt-4 login-links">
+
+<p class="mb-1">
+Don't have a seller account?
+</p>
+
+<a href="{% url 'seller_register' %}">
+Register Here
+</a>
+
+</div>
+
+<div class="text-center mt-3 login-links">
+
+<p class="mb-1">
+Are you a customer?
+</p>
+
+<a href="{% url 'login' %}">
+Customer Login
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

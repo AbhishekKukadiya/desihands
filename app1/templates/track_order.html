@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+.track-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: 40px auto;
+    overflow: hidden;
+    border: 2px solid #111;
+}
+
+.track-header {
+    background: linear-gradient(45deg, #111, #333);
+    color: white;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+}
+
+.track-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39, #ffc107);
+}
+
+.track-header h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 28px;
+    color: #ffc107;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.track-header p {
+    color: #fff;
+    opacity: 0.9;
+    margin: 10px 0 0 0;
+}
+
+.track-body {
+    padding: 40px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.track-icon {
+    font-size: 64px;
+    color: #ffc107;
+    margin-bottom: 20px;
+}
+
+.track-form {
+    margin-top: 30px;
+}
+
+.track-input {
+    height: 55px;
+    font-size: 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.track-input:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    outline: none;
+}
+
+.track-btn {
+    background: linear-gradient(45deg, #ffc107, #ffca2c);
+    color: #111;
+    border: none;
+    height: 55px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0 30px;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.track-btn:hover {
+    background: linear-gradient(45deg, #ffca2c, #ffc107);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 193, 7, 0.3);
+}
+
+.track-info {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    border-left: 4px solid #ffc107;
+}
+
+.track-info h5 {
+    color: #111;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.track-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.track-info li {
+    padding: 8px 0;
+    color: #666;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.track-info li i {
+    color: #ffc107;
+    margin-right: 10px;
+    width: 20px;
+    font-size: 16px;
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.alert-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+}
+
+.alert-info {
+    background: linear-gradient(45deg, #17a2b8, #138496);
+    color: white;
+}
+
+/* Responsive Design */
+@media(max-width:768px) {
+    .track-container {
+        margin: 20px 10px;
+        border-radius: 10px;
+    }
+    
+    .track-header {
+        padding: 25px 20px;
+    }
+    
+    .track-header h3 {
+        font-size: 24px;
+    }
+    
+    .track-body {
+        padding: 30px 20px;
+    }
+    
+    .track-icon {
+        font-size: 48px;
+    }
+    
+    .track-input,
+    .track-btn {
+        height: 50px;
+        font-size: 15px;
+    }
+}
+
+@media(max-width:576px) {
+    .track-container {
+        margin: 15px 5px;
+        border-radius: 8px;
+    }
+    
+    .track-header {
+        padding: 20px 15px;
+    }
+    
+    .track-header h3 {
+        font-size: 20px;
+    }
+    
+    .track-header p {
+        font-size: 14px;
+    }
+    
+    .track-body {
+        padding: 25px 15px;
+    }
+    
+    .track-icon {
+        font-size: 40px;
+    }
+    
+    .track-input,
+    .track-btn {
+        height: 45px;
+        font-size: 14px;
+    }
+    
+    .track-info {
+        padding: 15px;
+    }
+    
+    .track-info h5 {
+        font-size: 16px;
+    }
+    
+    .track-info li {
+        font-size: 13px;
+    }
+}
+</style>
+
+<div class="track-container">
+    <div class="track-card">
+        <!-- Header -->
+        <div class="track-header">
+            <h3>
+                <i class="bi bi-truck me-2"></i>
+                Track Your Order
+            </h3>
+            <p>Enter your order ID or tracking number to track your package</p>
+        </div>
+        
+        <!-- Body -->
+        <div class="track-body">
+            <div class="text-center">
+                <div class="track-icon">
+                    <i class="bi bi-geo-alt-fill"></i>
+                </div>
+                
+                {% if request.session.login %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <form method="POST" action="{% url 'track_order_result' %}" class="track-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="text" 
+                                   name="tracking_number" 
+                                   class="form-control track-input" 
+                                   placeholder="Enter Order ID or Tracking Number" 
+                                   required>
+                        </div>
+                        <button type="submit" class="btn track-btn">
+                            <i class="bi bi-search me-2"></i>
+                            Track Order
+                        </button>
+                    </form>
+                    
+                    <div class="track-info">
+                        <h5>
+                            <i class="bi bi-info-circle me-2"></i>
+                            How to track your order?
+                        </h5>
+                        <ul>
+                            <li><i class="bi bi-check-circle"></i> Enter your Order ID (e.g., 12345)</li>
+                            <li><i class="bi bi-check-circle"></i> Or enter your Tracking Number (e.g., DESI123456)</li>
+                            <li><i class="bi bi-check-circle"></i> You can find these details in your order confirmation email</li>
+                            <li><i class="bi bi-check-circle"></i> Or check your "My Orders" section in your account</li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Please <a href="{% url 'login' %}" class="alert-link">login</a> to track your orders.
+                    </div>
+                    
+                    <div class="track-info">
+                        <h5>
+                            <i class="bi bi-lock me-2"></i>
+                            Order Tracking Requires Login
+                        </h5>
+                        <ul>
+                            <li><i class="bi bi-shield-check"></i> Only logged-in users can track their orders</li>
+                            <li><i class="bi bi-user-lock"></i> You can only track your own orders</li>
+                            <li><i class="bi bi-lock-fill"></i> This protects your privacy and order information</li>
+                            <li><i class="bi bi-person-check"></i> Please login to access order tracking</li>
+                        </ul>
+                        
+                        <div class="mt-3">
+                            <a href="{% url 'login' %}" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>
+                                Login to Track Orders
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

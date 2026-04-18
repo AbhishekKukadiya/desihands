@@ -1,0 +1,489 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+.payment-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    max-width: 800px;
+    margin: auto;
+    overflow: hidden;
+    border: 2px solid #111;
+}
+
+.payment-header {
+    background: linear-gradient(45deg, #111, #333);
+    color: white;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+}
+
+.payment-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39, #ffc107);
+}
+
+.payment-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 28px;
+    color: #ffc107;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.payment-header p {
+    color: #fff;
+    opacity: 0.9;
+    margin-top: 10px;
+}
+
+.payment-body {
+    padding: 40px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.order-summary {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.order-summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+    border-radius: 10px 10px 0 0;
+}
+
+.payment-info {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.payment-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+    border-radius: 10px 10px 0 0;
+}
+
+.section-title {
+    color: #111;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #ffc107;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #111;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+    font-weight: 700;
+    font-size: 18px;
+    color: #111;
+}
+
+.amount-highlight {
+    color: #ffc107;
+    font-weight: 700;
+    font-size: 20px;
+}
+
+.payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.payment-method-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.payment-method-card:hover {
+    border-color: #ffc107;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+}
+
+.payment-method-card.selected {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #fffbf0 100%);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+}
+
+.payment-method-card.selected::before {
+    content: '✓';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ffc107;
+    color: #111;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+.payment-icon {
+    font-size: 40px;
+    margin-bottom: 15px;
+    color: #111;
+}
+
+.payment-name {
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 5px;
+}
+
+.payment-desc {
+    font-size: 12px;
+    color: #666;
+}
+
+.btn-pay {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    color: #111;
+    border: 2px solid #111;
+    padding: 18px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 18px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-pay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-pay:hover {
+    background: linear-gradient(45deg, #111, #333);
+    color: #ffc107;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    border-color: #ffc107;
+}
+
+.btn-pay:hover::before {
+    left: 100%;
+}
+
+.btn-pay:disabled {
+    background: #e9ecef;
+    color: #666;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #111;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.payment-status {
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+.payment-status.processing {
+    background: linear-gradient(135deg, #fff8e1 0%, #fffbf0 100%);
+    border: 2px solid #ffc107;
+    color: #111;
+}
+
+.payment-status.success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border: 2px solid #28a745;
+    color: #155724;
+}
+
+.payment-status.error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 2px solid #dc3545;
+    color: #721c24;
+}
+
+@media (max-width: 768px) {
+    .payment-body {
+        padding: 20px;
+    }
+    
+    .payment-methods {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="container py-5">
+    <div class="payment-container">
+        <div class="payment-header">
+            <h2><i class="bi bi-credit-card me-3"></i>Secure Payment</h2>
+            <p class="mb-0">Complete your payment securely</p>
+        </div>
+        
+        <div class="payment-body">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h4 class="section-title">Order Summary</h4>
+                <div class="info-row">
+                    <span>Order ID</span>
+                    <span>#{{ order.id }}</span>
+                </div>
+                <div class="info-row">
+                    <span>Items</span>
+                    <span>{{ order.orderitem_set.count }} items</span>
+                </div>
+                <div class="info-row">
+                    <span>Delivery Address</span>
+                    <span>{{ order.city }}, {{ order.state }}</span>
+                </div>
+                <div class="info-row">
+                    <span>Total Amount</span>
+                    <span class="amount-highlight">₹ {{ order.total_amount|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="payment-info">
+                <h4 class="section-title">Payment Information</h4>
+                <div class="info-row">
+                    <span>Name</span>
+                    <span>{{ user.name }}</span>
+                </div>
+                <div class="info-row">
+                    <span>Email</span>
+                    <span>{{ user.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span>Phone</span>
+                    <span>{{ user.contact }}</span>
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            <div id="paymentStatus" class="payment-status">
+                <div class="status-message"></div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="payment-methods">
+                <div class="payment-method-card selected" data-method="razorpay">
+                    <i class="bi bi-credit-card-2-front payment-icon"></i>
+                    <div class="payment-name">Credit/Debit Card</div>
+                    <div class="payment-desc">Visa, Mastercard, Rupay</div>
+                </div>
+                <div class="payment-method-card" data-method="upi">
+                    <i class="bi bi-phone payment-icon"></i>
+                    <div class="payment-name">UPI</div>
+                    <div class="payment-desc">Google Pay, PhonePe, Paytm</div>
+                </div>
+                <div class="payment-method-card" data-method="netbanking">
+                    <i class="bi bi-bank payment-icon"></i>
+                    <div class="payment-name">Net Banking</div>
+                    <div class="payment-desc">All major banks</div>
+                </div>
+                <div class="payment-method-card" data-method="wallet">
+                    <i class="bi bi-wallet2 payment-icon"></i>
+                    <div class="payment-name">Wallet</div>
+                    <div class="payment-desc">Paytm, PhonePe, Amazon Pay</div>
+                </div>
+            </div>
+
+            <!-- Pay Button -->
+            <button id="payButton" class="btn-pay" onclick="initiatePayment()">
+                <i class="bi bi-lock-fill me-2"></i>
+                Pay ₹{{ order.total_amount|floatformat:2 }}
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+const orderId = "{{ order.id }}";
+const razorpayOrderId = "{{ razorpay_order_id }}";
+const razorpayKeyId = "{{ razorpay_key_id }}";
+const razorpayAmount = "{{ razorpay_amount }}";
+const currency = "{{ currency }}";
+const callbackUrl = "{{ callback_url }}";
+const userDetails = {
+    name: "{{ user.name }}",
+    email: "{{ user.email }}",
+    contact: "{{ user.contact }}"
+};
+
+let selectedPaymentMethod = 'razorpay';
+
+// Payment method selection
+document.querySelectorAll('.payment-method-card').forEach(card => {
+    card.addEventListener('click', function() {
+        document.querySelectorAll('.payment-method-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        selectedPaymentMethod = this.dataset.method;
+    });
+});
+
+function showPaymentStatus(status, message) {
+    const statusDiv = document.getElementById('paymentStatus');
+    const messageDiv = statusDiv.querySelector('.status-message');
+    
+    statusDiv.className = `payment-status ${status}`;
+    statusDiv.style.display = 'block';
+    messageDiv.innerHTML = message;
+}
+
+function initiatePayment() {
+    const payButton = document.getElementById('payButton');
+    const spinner = document.getElementById('loadingSpinner');
+    
+    // Disable button and show loading
+    payButton.disabled = true;
+    spinner.style.display = 'inline-block';
+    
+    showPaymentStatus('processing', '<i class="bi bi-hourglass-split me-2"></i>Processing payment...');
+    
+    if (selectedPaymentMethod === 'wallet') {
+        // Handle wallet payment
+        window.location.href = `/payment/wallet/${orderId}/`;
+        return;
+    }
+    
+    // Initialize Razorpay
+    const options = {
+        key: razorpayKeyId,
+        amount: razorpayAmount,
+        currency: currency,
+        name: "DesiHands",
+        description: `Order #${orderId}`,
+        order_id: razorpayOrderId,
+        callback_url: callbackUrl,
+        prefill: userDetails,
+        theme: {
+            color: "#ffc107"
+        },
+        modal: {
+            ondismiss: function() {
+                payButton.disabled = false;
+                spinner.style.display = 'none';
+                showPaymentStatus('error', '<i class="bi bi-x-circle me-2"></i>Payment cancelled. Please try again.');
+            }
+        }
+    };
+    
+    const rzp = new Razorpay(options);
+    
+    rzp.on('payment.failed', function(response) {
+        payButton.disabled = false;
+        spinner.style.display = 'none';
+        showPaymentStatus('error', `<i class="bi bi-x-circle me-2"></i>Payment failed: ${response.error.description}`);
+    });
+    
+    rzp.on('payment.success', function(response) {
+        showPaymentStatus('success', '<i class="bi bi-check-circle me-2"></i>Payment successful! Redirecting...');
+        setTimeout(() => {
+            window.location.href = `/order-confirmation/${orderId}/`;
+        }, 2000);
+    });
+    
+    rzp.open();
+}
+
+// Handle payment callback
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'payment_success') {
+        showPaymentStatus('success', '<i class="bi bi-check-circle me-2"></i>Payment successful! Redirecting...');
+        setTimeout(() => {
+            window.location.href = event.data.redirect_url;
+        }, 2000);
+    } else if (event.data.type === 'payment_failed') {
+        document.getElementById('payButton').disabled = false;
+        document.getElementById('loadingSpinner').style.display = 'none';
+        showPaymentStatus('error', `<i class="bi bi-x-circle me-2"></i>${event.data.message}`);
+    }
+});
+</script>
+
+{% endblock %}

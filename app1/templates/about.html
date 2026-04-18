@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<style>
+/* About Page Styling */
+.about-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+}
+
+.about-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.btn-shadow {
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-shadow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+}
+
+.text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.content-text {
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .about-card {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+{% block content %}
+
+<div class="container mt-4 mb-4">
+
+<!-- HERO BANNER -->
+<section class="mb-4">
+<div class="p-4 text-center hero-section text-shadow">
+<h1 class="fw-bold">About Desi Hands</h1>
+<p class="text-muted">
+Connecting Indian artisans with customers who love handmade products.
+</p>
+</div>
+</section>
+
+<!-- OUR STORY -->
+<section class="mb-4">
+<div class="about-card p-4">
+<div class="row align-items-center">
+<div class="col-lg-12">
+<h3 class="section-title">
+<i class="bi bi-bookmark-star-fill text-warning me-2"></i>
+Our Story
+</h3>
+<p class="content-text">
+Desi Hands was founded with a simple mission: to connect talented Indian artisans with customers who appreciate authentic handmade products. We believe in preserving traditional crafts while providing artisans with a sustainable livelihood.
+</p>
+<p class="content-text">
+What started as a small passion project has grown into a thriving marketplace where artisans from across India showcase their incredible craftsmanship. From intricate jewelry to beautiful home decor, every product tells a story of tradition, skill, and passion.
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- OUR MISSION -->
+<section class="mb-4">
+<div class="about-card p-4">
+<div class="row align-items-center">
+<div class="col-lg-12">
+<h3 class="section-title">
+<i class="bi bi-bullseye text-warning me-2"></i>
+Our Mission
+</h3>
+<p class="content-text">
+Our mission is to empower local artisans and preserve India's rich cultural heritage by providing them with a platform to reach a global audience. We ensure fair compensation for their work and help them continue their traditional crafts for future generations.
+</p>
+<p class="content-text">
+We carefully curate each product to ensure authenticity, quality, and fair trade practices. When you shop with Desi Hands, you're not just buying a product - you're supporting a family, preserving a tradition, and contributing to sustainable livelihoods.
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- CALL TO ACTION -->
+<section class="mb-4">
+<div class="text-center p-3 bg-light rounded shadow-sm">
+<h4 class="fw-bold mb-3">Explore Our Collection</h4>
+<p class="text-muted mb-3">
+Discover unique handmade products crafted with love and tradition.
+</p>
+<a href="{% url 'store' %}" class="btn btn-warning btn-shadow">
+<i class="bi bi-shop me-2"></i>Visit Store
+</a>
+</div>
+</section>
+
+</div>
+
+{% endblock %}

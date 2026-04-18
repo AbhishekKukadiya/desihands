@@ -1,0 +1,1051 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+/* FLIPKART-STYLE RESPONSIVE CHECKOUT PAGE */
+.checkout-container{background:linear-gradient(135deg, #f8f9fa 0%, #fff 100%);border-radius:20px;box-shadow:0 15px 40px rgba(0,0,0,0.15);max-width:1200px;margin:40px auto;overflow:hidden;border:2px solid #111;}
+.checkout-header{background:linear-gradient(45deg, #111, #333);color:white;padding:40px 30px;text-align:center;position:relative;}
+.checkout-header::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg, #ffc107, #ffcd39, #ffc107);}
+.checkout-header h3{margin:0;font-weight:700;font-size:2.5rem;color:#ffc107;text-shadow:2px 2px 4px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;}
+.checkout-header h3 i{margin-right:15px;font-size:2.8rem;}
+.checkout-header p{color:rgba(255,255,255,0.9);font-size:1.1rem;margin:0;}
+.checkout-body{padding:50px 40px;background:linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);}
+.section-title{color:#111;font-weight:700;margin-bottom:20px;border-bottom:3px solid #ffc107;padding-bottom:10px;position:relative;font-size:1.3rem;}
+.section-title::after{content:'';position:absolute;bottom:-3px;left:0;width:50px;height:3px;background:#111;}
+.order-summary{background:white;border-radius:15px;padding:30px;box-shadow:0 8px 25px rgba(0,0,0,0.1);margin-bottom:30px;border:1px solid #e9ecef;position:relative;}
+.order-summary::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, #ffc107, #ffcd39);border-radius:15px 15px 0 0;}
+.product-item{display:flex;align-items:center;padding:20px 0;border-bottom:1px solid #eee;transition:all 0.3s ease;}
+.product-item:hover{background:#f8f9fa;margin:0 -25px;padding:20px 25px;}
+.product-item:last-child{border-bottom:none;}
+.product-img{width:100px;height:100px;object-fit:cover;border-radius:12px;margin-right:20px;border:2px solid #ffc107;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+.product-details{flex:1;}
+.product-name{font-weight:600;color:#333;margin-bottom:8px;font-size:1.2rem;}
+.product-price{color:#28a745;font-weight:600;font-size:1.1rem;}
+.quantity-badge{background:linear-gradient(45deg, #ffc107, #ffca2c);color:#111;padding:8px 15px;border-radius:20px;font-size:0.9rem;font-weight:700;border:1px solid #111;box-shadow:0 2px 8px rgba(255, 193, 7, 0.3);}
+.shipping-address{background:white;border-radius:15px;padding:30px;box-shadow:0 8px 25px rgba(0,0,0,0.1);margin-bottom:30px;border:1px solid #e9ecef;position:relative;}
+.shipping-address::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, #ffc107, #ffcd39);border-radius:15px 15px 0 0;}
+.address-display{background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);padding:25px;border-radius:12px;border-left:4px solid #ffc107;}
+.payment-method{background:white;border-radius:15px;padding:30px;box-shadow:0 8px 25px rgba(0,0,0,0.1);margin-bottom:30px;border:1px solid #e9ecef;position:relative;}
+.payment-method::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, #ffc107, #ffcd39);border-radius:15px 15px 0 0;}
+.payment-options{display:flex;flex-direction:column;gap:15px;}
+.payment-option{display:flex;align-items:center;padding:20px;border:2px solid #e9ecef;border-radius:12px;cursor:pointer;transition:all 0.3s ease;background:#fff;}
+.payment-option:hover{border-color:#ffc107;background:rgba(255, 193, 7, 0.05);transform:translateY(-2px);box-shadow:0 5px 15px rgba(255, 193, 7, 0.2);}
+.payment-option.selected{border-color:#ffc107;background:rgba(255, 193, 7, 0.1);box-shadow:0 5px 15px rgba(255, 193, 7, 0.3);}
+.payment-option input[type="radio"]{margin-right:15px;width:20px;height:20px;accent-color:#ffc107;}
+.payment-icon{font-size:2rem;margin-right:15px;color:#111;background:#ffc107;padding:12px;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;transition:all 0.3s ease;}
+.payment-option strong{color:#111;font-size:1.1rem;display:block;margin-bottom:5px;}
+.order-total{background:linear-gradient(135deg, #111 0%, #333 100%);color:white;border-radius:15px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,0.3);border:2px solid #ffc107;position:relative;}
+.order-total::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;background:linear-gradient(45deg, #ffc107, #ffcd39, #ffc107);border-radius:13px;z-index:-1;}
+.btn-place-order{background:linear-gradient(45deg, #ffc107, #ffca2c);color:#111;border:2px solid #111;border-radius:50px;padding:20px 40px;font-weight:700;font-size:1.3rem;width:100%;transition:all 0.3s ease;box-shadow:0 8px 25px rgba(255, 193, 7, 0.3);text-transform:uppercase;letter-spacing:1px;position:relative;}
+.btn-place-order:hover{background:linear-gradient(45deg, #111, #333);color:#ffc107;transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,0,0,0.4);border-color:#ffc107;}
+.btn-place-order:active{transform:translateY(-1px);}
+.empty-cart{text-align:center;padding:80px 20px;background:white;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.1);border:2px solid #ffc107;}
+.empty-cart i{font-size:6rem;color:#ffc107;margin-bottom:25px;}
+.empty-cart h4{color:#333;margin-bottom:15px;font-size:2rem;}
+.empty-cart p{color:#666;margin-bottom:30px;font-size:1.1rem;}
+.btn-dark{background:linear-gradient(45deg, #111, #333);color:white;border:none;border-radius:12px;padding:15px 30px;font-weight:600;font-size:1.1rem;transition:all 0.3s ease;box-shadow:0 8px 25px rgba(0,0,0,0.3);text-decoration:none;display:inline-flex;align-items:center;gap:10px;}
+.btn-dark:hover{background:linear-gradient(45deg, #333, #111);transform:translateY(-2px);box-shadow:0 12px 35px rgba(0,0,0,0.4);}
+
+/* TABLET AND BELOW (768px and down) */
+@media(max-width:768px){
+.checkout-container{margin:30px 10px;border-radius:15px;}
+.checkout-header{padding:30px 20px;}
+.checkout-header h3{font-size:2rem;}
+.checkout-header h3 i{font-size:2.3rem;margin-right:10px;}
+.checkout-header p{font-size:1rem;}
+.checkout-body{padding:35px 25px;}
+.section-title{font-size:1.1rem;margin-bottom:15px;padding-bottom:8px;}
+.order-summary{padding:20px;margin-bottom:20px;}
+.product-item{padding:15px 0;}
+.product-item:hover{padding:15px 20px;}
+.product-img{width:80px;height:80px;margin-right:15px;}
+.product-name{font-size:1rem;}
+.product-price{font-size:1rem;}
+.quantity-badge{font-size:0.8rem;padding:6px 12px;}
+.shipping-address{padding:20px;margin-bottom:20px;}
+.address-display{padding:20px;}
+.payment-method{padding:20px;margin-bottom:20px;}
+.payment-option{padding:15px;}
+.payment-icon{font-size:1.5rem;margin-right:10px;padding:8px;width:40px;height:40px;}
+.payment-option strong{font-size:1rem;}
+.order-total{padding:20px;}
+.btn-place-order{font-size:1.1rem;padding:15px 30px;}
+.empty-cart{padding:60px 15px;}
+.empty-cart i{font-size:5rem;}
+.empty-cart h4{font-size:1.8rem;}
+.empty-cart p{font-size:1rem;}
+.btn-dark{font-size:1rem;padding:12px 25px;}
+}
+
+/* MOBILE PHONES (576px and down) */
+@media(max-width:576px){
+.checkout-container{margin:20px 5px;border-radius:12px;}
+.checkout-header{padding:25px 15px;}
+.checkout-header h3{font-size:1.6rem;}
+.checkout-header h3 i{font-size:1.8rem;margin-right:8px;}
+.checkout-header p{font-size:0.9rem;}
+.checkout-body{padding:25px 15px;}
+.section-title{font-size:1rem;margin-bottom:12px;padding-bottom:6px;}
+.order-summary{padding:15px;margin-bottom:15px;}
+.product-item{flex-direction:column;text-align:center;padding:12px 0;}
+.product-item:hover{padding:12px 15px;}
+.product-img{width:60px;height:60px;margin-right:0;margin-bottom:10px;}
+.product-name{font-size:0.9rem;}
+.product-price{font-size:0.85rem;}
+.quantity-badge{font-size:0.75rem;padding:4px 8px;}
+.shipping-address{padding:15px;margin-bottom:15px;}
+.address-display{padding:15px;}
+.payment-method{padding:15px;margin-bottom:15px;}
+.payment-option{padding:12px;}
+.payment-icon{font-size:1.2rem;margin-right:8px;padding:6px;width:35px;height:35px;}
+.payment-option strong{font-size:0.9rem;}
+.order-total{padding:15px;}
+.btn-place-order{font-size:1rem;padding:12px 25px;}
+.empty-cart{padding:40px 10px;}
+.empty-cart i{font-size:4rem;}
+.empty-cart h4{font-size:1.6rem;}
+.empty-cart p{font-size:0.9rem;}
+.btn-dark{font-size:0.9rem;padding:10px 20px;}
+}
+
+/* SMALL MOBILE PHONES (480px and down) */
+@media(max-width:480px){
+.checkout-container{margin:15px 2px;border-radius:10px;}
+.checkout-header{padding:20px 10px;}
+.checkout-header h3{font-size:1.4rem;}
+.checkout-header h3 i{font-size:1.6rem;margin-right:6px;}
+.checkout-header p{font-size:0.85rem;}
+.checkout-body{padding:20px 10px;}
+.section-title{font-size:0.9rem;margin-bottom:10px;padding-bottom:5px;}
+.order-summary{padding:12px;margin-bottom:12px;}
+.product-item{padding:10px 0;}
+.product-item:hover{padding:10px 12px;}
+.product-img{width:50px;height:50px;margin-bottom:8px;}
+.product-name{font-size:0.85rem;}
+.product-price{font-size:0.8rem;}
+.quantity-badge{font-size:0.7rem;padding:3px 6px;}
+.shipping-address{padding:12px;margin-bottom:12px;}
+.address-display{padding:12px;}
+.payment-method{padding:12px;margin-bottom:12px;}
+.payment-option{padding:10px;}
+.payment-icon{font-size:1rem;margin-right:6px;padding:4px;width:30px;height:30px;}
+.payment-option strong{font-size:0.85rem;}
+.order-total{padding:12px;}
+.btn-place-order{font-size:0.9rem;padding:10px 20px;}
+.empty-cart{padding:30px 8px;}
+.empty-cart i{font-size:3rem;}
+.empty-cart h4{font-size:1.4rem;}
+.empty-cart p{font-size:0.85rem;}
+.btn-dark{font-size:0.85rem;padding:8px 15px;}
+}
+
+/* VERY SMALL MOBILE PHONES (360px and down) */
+@media(max-width:360px){
+.checkout-header h3{font-size:1.2rem;}
+.checkout-header h3 i{font-size:1.4rem;}
+.checkout-header p{font-size:0.8rem;}
+.checkout-body{padding:15px 8px;}
+.section-title{font-size:0.85rem;}
+.product-img{width:40px;height:40px;}
+.product-name{font-size:0.8rem;}
+.product-price{font-size:0.75rem;}
+.quantity-badge{font-size:0.65rem;}
+.payment-icon{font-size:0.8rem;width:25px;height:25px;}
+.payment-option strong{font-size:0.8rem;}
+.order-total{padding:10px;}
+.btn-place-order{font-size:0.85rem;padding:8px 15px;}
+.empty-cart i{font-size:2.5rem;}
+.empty-cart h4{font-size:1.2rem;}
+.empty-cart p{font-size:0.8rem;}
+.btn-dark{font-size:0.8rem;padding:6px 12px;}
+}
+
+/* TOUCH OPTIMIZATIONS */
+@media(max-width:768px){
+.payment-option,.btn-place-order,.btn-dark{min-height:44px;touch-action:manipulation;}
+}
+
+/* LANDSCAPE ORIENTATIONS */
+@media(max-width:768px) and (orientation:landscape){
+.checkout-header{padding:20px 15px;}
+.checkout-body{padding:25px 20px;}
+.section-title{margin-bottom:10px;}
+}
+
+/* ACCESSIBILITY IMPROVEMENTS */
+@media(prefers-reduced-motion: reduce){
+.payment-option,.btn-place-order,.btn-dark{transition:none;}
+}
+
+.section-title {
+    color: #111;
+    font-weight: 700;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #ffc107;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: #111;
+}
+
+.order-summary {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.order-summary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+    border-radius: 10px 10px 0 0;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.product-item:hover {
+    background: #f8f9fa;
+    margin: 0 -25px;
+    padding: 15px 25px;
+}
+
+.product-item:last-child {
+    border-bottom: none;
+}
+
+.product-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    border: 2px solid #ffc107;
+}
+
+.product-details {
+    flex: 1;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.product-price {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.quantity-badge {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    color: #111;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid #111;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.shipping-address {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.shipping-address::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+    border-radius: 10px 10px 0 0;
+}
+
+/* Payment Method Styles */
+.payment-method {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.payment-method::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+    border-radius: 10px 10px 0 0;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.05);
+}
+
+.payment-option.selected {
+    border-color: #ffc107;
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.payment-option input[type="radio"] {
+    margin-right: 15px;
+}
+
+.payment-icon {
+    font-size: 24px;
+    font-size: 28px;
+    margin-right: 15px;
+    color: #111;
+    background: #ffc107;
+    padding: 10px;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.payment-option div {
+    flex: 1;
+}
+
+.payment-option strong {
+    color: #111;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.address-display {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+    border: 1px solid #dee2e6;
+}
+
+.payment-method {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.payment-method::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+    border-radius: 10px 10px 0 0;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.payment-option:hover {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #fffbf0 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+}
+
+.payment-option.selected {
+    border-color: #ffc107;
+    background: linear-gradient(135deg, #fff8e1 0%, #fffbf0 100%);
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    transform: translateY(-1px);
+}
+
+.payment-option input[type="radio"] {
+    margin-right: 15px;
+    width: 20px;
+    height: 20px;
+    accent-color: #ffc107;
+}
+
+.order-total {
+    background: linear-gradient(135deg, #111 0%, #333 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border: 2px solid #ffc107;
+    position: relative;
+}
+
+.order-total::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ffc107, #ffcd39, #ffc107);
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 16px;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    font-size: 20px;
+    font-weight: 700;
+    padding-top: 20px;
+    margin-top: 10px;
+    border-top: 2px solid #ffc107;
+}
+
+.price-highlight {
+    color: #ffc107;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.btn-place-order {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    color: #111;
+    border: 2px solid #111;
+    padding: 18px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 18px;
+    width: 100%;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-place-order:hover {
+    background: linear-gradient(45deg, #111, #333);
+    color: #ffc107;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    border-color: #ffc107;
+}
+
+.btn-place-order:active {
+    transform: translateY(-1px);
+}
+
+.empty-cart {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #ffc107;
+}
+
+.empty-cart i {
+    font-size: 80px;
+    color: #ffc107;
+    margin-bottom: 20px;
+}
+
+.checkout-progress {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    position: relative;
+    padding: 20px 0;
+}
+
+.progress-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+}
+
+.progress-step::before {
+    content: '';
+    position: absolute;
+    top: 25px;
+    left: 50%;
+    right: -50%;
+    height: 3px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.progress-step:last-child::before {
+    display: none;
+}
+
+.progress-step.active::before {
+    background: linear-gradient(90deg, #ffc107, #ffcd39);
+}
+
+.progress-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    position: relative;
+    z-index: 2;
+    font-weight: 700;
+    font-size: 18px;
+    border: 3px solid #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.progress-step.active .progress-icon {
+    background: linear-gradient(45deg, #ffc107, #ffcd39);
+    color: #111;
+    border-color: #ffc107;
+    box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
+}
+
+.progress-step.completed .progress-icon {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+    border-color: #28a745;
+}
+
+.progress-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.progress-step.active .progress-label {
+    color: #111;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .checkout-body {
+        padding: 20px;
+    }
+    
+    .product-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .product-img {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .checkout-progress {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .progress-step::before {
+        display: none;
+    }
+}
+</style>
+
+<div class="container">
+    <div class="checkout-container">
+        <div class="checkout-header">
+            <h3><i class="bi bi-credit-card me-3"></i>Secure Checkout</h3>
+            <p class="mb-0 mt-2">Complete your order in a few simple steps</p>
+        </div>
+        
+        <div class="checkout-body">
+            {% if cart_items %}
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <h4 class="section-title">Order Summary</h4>
+                {% for item in cart_items %}
+                <div class="product-item">
+                    {% if item.name.image %}
+                    <img src="{{ item.name.image.url }}" class="product-img" alt="{{ item.name.name }}">
+                    {% else %}
+                    <div class="product-img bg-light d-flex align-items-center justify-content-center">
+                        <i class="bi bi-image text-muted" style="font-size: 30px;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="product-details">
+                        <div class="product-name">{{ item.name.name }}</div>
+                    </div>
+                    <div class="quantity-badge">Qty: {{ item.qty }}</div>
+                    <div class="product-price">₹ {{ item.total_price }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Main Content Area -->
+            <form method="POST" action="{% url 'place_order' %}" id="checkoutForm">
+                {% csrf_token %}
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Shipping Address -->
+                    <div class="shipping-address">
+                        <h4 class="section-title">Shipping Address</h4>
+                        <div class="address-display">
+                            <h5 class="mb-2">{{ user.username }}</h5>
+                            <p class="mb-1">{{ user.address }}</p>
+                            <p class="mb-1">{{ user.city }}, {{ user.state }} - {{ user.pincode }}</p>
+                            <p class="mb-0"><i class="bi bi-phone me-2"></i>{{ user.phone }}</p>
+                            <p class="mb-0"><i class="bi bi-envelope me-2"></i>{{ user.email }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="payment-method">
+                        <h4 class="section-title">Payment Method</h4>
+                        <div class="payment-options">
+                            <div class="payment-option" onclick="selectPaymentMethod('cod')">
+                                <input type="radio" name="payment_method" value="cod" id="cod" checked>
+                                <i class="bi bi-cash payment-icon" style="color: #111 !important; background: #ffc107 !important;"></i>
+                                <div>
+                                    <strong>Cash on Delivery</strong>
+                                    <small class="text-muted d-block">Pay when you receive your order</small>
+                                </div>
+                            </div>
+                            
+                            <div class="payment-option" onclick="selectPaymentMethod('online')">
+                                <input type="radio" name="payment_method" value="online" id="online">
+                                <i class="bi bi-credit-card-2-front payment-icon"></i>
+                                <div>
+                                    <strong>Online Payment</strong>
+                                    <p class="text-muted small mb-0">Pay with Credit/Debit Card, NetBanking, UPI & Wallets</p>
+                                </div>
+                            </div>
+                            
+                                                    </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <!-- Order Total -->
+                    <div class="order-total">
+                        <h4 class="section-title text-white">Order Total</h4>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>₹ {{ total|floatformat:2 }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Delivery Charges</span>
+                            <span class="price-highlight">FREE</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Grand Total</span>
+                            <span class="price-highlight">₹ {{ grand_total|floatformat:2 }}</span>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-place-order mt-4 w-100" id="placeOrderBtn">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <span id="btnText">Place Order</span>
+                            <div class="spinner-border spinner-border-sm ms-2 d-none" id="btnSpinner" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+                        
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">
+                                <i class="bi bi-shield-check me-1"></i>
+                                Secure checkout • 100% payment protection
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </form>
+            {% else %}
+            <!-- Empty Cart -->
+            <div class="empty-cart">
+                <i class="bi bi-cart-x"></i>
+                <h4 class="text-muted">Your cart is empty</h4>
+                <p class="text-muted">Add some products to your cart before checkout</p>
+                <a href="{% url 'store' %}" class="btn btn-dark mt-3">
+                    <i class="bi bi-arrow-left me-2"></i>Continue Shopping
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded');
+    
+    // Function to select payment method
+    window.selectPaymentMethod = function(method) {
+        console.log('selectPaymentMethod called with:', method);
+        
+        // Uncheck all payment methods
+        const allMethods = document.querySelectorAll('input[name="payment_method"]');
+        allMethods.forEach(m => m.checked = false);
+        
+        // Check the selected method
+        const selectedMethod = document.getElementById(method);
+        if (selectedMethod) {
+            selectedMethod.checked = true;
+        }
+        
+        // Remove selected class from all options
+        document.querySelectorAll('.payment-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        // Add selected class to selected option
+        const selectedOption = selectedMethod ? selectedMethod.closest('.payment-option') : null;
+        if (selectedOption) {
+            selectedOption.classList.add('selected');
+        }
+    };
+    
+    // Check if Razorpay loads
+    setTimeout(function() {
+        if (typeof Razorpay !== 'undefined') {
+            console.log('✅ Razorpay loaded');
+            
+            // Add form submit handler
+            const form = document.getElementById('checkoutForm');
+            console.log('Form found:', form);
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    console.log('Form submitted!');
+                    
+                    const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+                    console.log('Payment method:', paymentMethod ? paymentMethod.value : 'none');
+                    
+                    if (paymentMethod && paymentMethod.value === 'online') {
+                        console.log('Online payment selected - preventing default');
+                        e.preventDefault();
+                        
+                        // Show loading
+                        const btn = document.getElementById('placeOrderBtn');
+                        const btnText = document.getElementById('btnText');
+                        const btnSpinner = document.getElementById('btnSpinner');
+                        
+                        btn.disabled = true;
+                        btnText.textContent = 'Opening Payment...';
+                        btnSpinner.classList.remove('d-none');
+                        
+                        // Create order and show Razorpay
+                        createOrderAndShowRazorpay();
+                    }
+                });
+            }
+        } else {
+            console.error('❌ Razorpay not loaded');
+            alert('Razorpay SDK failed to load');
+        }
+    }, 2000);
+    
+    // Function to create order and show Razorpay
+    async function createOrderAndShowRazorpay() {
+        try {
+            const form = document.getElementById('checkoutForm');
+            const formData = new FormData(form);
+            
+            console.log('Creating order...');
+            const response = await fetch('/place-order/', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            });
+            
+            const result = await response.json();
+            console.log('Order created:', result);
+            
+            if (result.error) {
+                alert('Error: ' + result.error);
+                resetButton();
+                return;
+            }
+            
+            // Show Razorpay
+            await showRazorpay(result.order_id, '{{ grand_total|floatformat:2 }}');
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to create order');
+            resetButton();
+        }
+    }
+    
+    // Function to show Razorpay
+    async function showRazorpay(orderId, amount) {
+        try {
+            console.log('Creating Razorpay order...');
+            const response = await fetch('/razorpay/create-order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({
+                    amount: amount,
+                    order_id: orderId
+                })
+            });
+            
+            const data = await response.json();
+            console.log('Razorpay order:', data);
+            
+            if (data.error) {
+                alert('Error: ' + data.error);
+                resetButton();
+                return;
+            }
+            
+            // Open Razorpay modal
+            const options = {
+                key: data.razorpay_key,
+                amount: data.amount * 100,
+                currency: 'INR',
+                name: 'Desi Hands',
+                description: `Order #${orderId}`,
+                order_id: data.razorpay_order_id,
+                handler: function (response) {
+                    console.log('Payment successful:', response);
+                    window.location.href = `/order-confirmation/${orderId}/`;
+                },
+                prefill: {
+                    name: '{{ user.username }}',
+                    email: '{{ user.email }}',
+                    contact: '{{ user.phone }}'
+                },
+                theme: {
+                    color: '#ffc107'
+                },
+                modal: {
+                    ondismiss: function() {
+                        console.log('Payment dismissed');
+                        resetButton();
+                    },
+                    escape: false,
+                    handleback: true
+                },
+                // Add redirect URLs for netbanking and other methods
+                redirect: true,
+                callback_url: `${window.location.origin}/razorpay/payment-success/?order_id=${orderId}`,
+                notes: {
+                    order_id: orderId
+                }
+            };
+            
+            console.log('Opening Razorpay modal...');
+            const rzp = new Razorpay(options);
+            rzp.open();
+            
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to open payment');
+            resetButton();
+        }
+    }
+    
+    // Reset button
+    function resetButton() {
+        const btn = document.getElementById('placeOrderBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        
+        btn.disabled = false;
+        btnText.textContent = 'Place Order';
+        btnSpinner.classList.add('d-none');
+    }
+    
+    // Get cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Debug: Check if form event listener is working
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    if (placeOrderBtn) {
+        console.log('Place order button found:', placeOrderBtn);
+        
+        // Add click handler as backup
+        placeOrderBtn.addEventListener('click', function(e) {
+            console.log('Place order button clicked!');
+            
+            // Debug: Check all payment methods
+            const allPaymentMethods = document.querySelectorAll('input[name="payment_method"]');
+            console.log('All payment methods found:', allPaymentMethods.length);
+            allPaymentMethods.forEach((method, index) => {
+                console.log(`Payment method ${index}:`, method.value, 'checked:', method.checked);
+            });
+            
+            const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+            console.log('Selected payment method element:', paymentMethod);
+            console.log('Payment method on button click:', paymentMethod ? paymentMethod.value : 'none');
+            
+            if (paymentMethod && paymentMethod.value === 'online') {
+                console.log('Online payment detected - preventing form submission');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Show loading
+                const btnText = document.getElementById('btnText');
+                const btnSpinner = document.getElementById('btnSpinner');
+                
+                placeOrderBtn.disabled = true;
+                btnText.textContent = 'Opening Payment...';
+                btnSpinner.classList.remove('d-none');
+                
+                // Create order and show Razorpay
+                createOrderAndShowRazorpay();
+            } else {
+                console.log('Not online payment, allowing normal submission');
+            }
+        });
+        
+    } else {
+        console.log('Place order button NOT found');
+    }
+    
+    // Add event listeners to payment method radio buttons
+    const paymentMethods = document.querySelectorAll('input[name="payment_method"]');
+    console.log('Adding listeners to payment methods:', paymentMethods.length);
+    
+    paymentMethods.forEach((method, index) => {
+        console.log(`Payment method ${index}:`, method.value, 'initially checked:', method.checked);
+        
+        method.addEventListener('change', function() {
+            console.log('Payment method changed to:', this.value);
+            console.log('All payment methods after change:');
+            paymentMethods.forEach((m, i) => {
+                console.log(`  Method ${i}:`, m.value, 'checked:', m.checked);
+            });
+        });
+        
+        // Also add click event for debugging
+        method.addEventListener('click', function() {
+            console.log('Payment method clicked:', this.value);
+            // Force check the radio button
+            this.checked = true;
+        });
+    });
+});
+
+// Handle Razorpay redirect response for POST requests
+window.addEventListener('load', function() {
+    // Check if we're on the payment success page and have a JSON response
+    if (window.location.pathname === '/razorpay/payment-success/') {
+        // Try to parse the response body
+        fetch(window.location.href, {
+            method: 'GET',
+            headers: {
+                'Accept': 'text/html,application/json'
+            }
+        }).then(response => {
+            if (response.headers.get('content-type')?.includes('application/json')) {
+                return response.json();
+            }
+            throw new Error('Not JSON response');
+        }).then(data => {
+            console.log('JSON response received:', data);
+            if (data.status === 'success' && data.redirect_url) {
+                console.log('Redirecting to:', data.redirect_url);
+                window.location.href = data.redirect_url;
+            }
+        }).catch(error => {
+            console.log('Not handling as JSON, letting page load normally');
+        });
+    }
+});
+</script>
+
+{% endblock %}
