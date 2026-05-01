@@ -1,0 +1,298 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Cart Item - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-submit {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+      }
+      .btn-submit:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+      .info-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item active">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Edit Cart Item</h1>
+            <p class="text-muted">Update cart item quantity and information</p>
+          </div>
+          <div>
+            <a href="{% url 'admin_cart' %}" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> Back to Cart
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form method="POST">
+          {% csrf_token %}
+          
+          <!-- Cart Item Information -->
+          <div class="info-card">
+            <h6><i class="bi bi-info-circle"></i> Cart Item Details</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>User:</strong> {{ cart_item.user.username|default:"Unknown" }} ({{ cart_item.user.email|default:"No email" }})</p>
+                <p><strong>Product:</strong> {{ cart_item.name.name|default:"Unknown Product" }}</p>
+                <p><strong>Category:</strong> {{ cart_item.name.category.name|default:"Uncategorized" }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Current Quantity:</strong> {{ cart_item.qty|default:"0" }}</p>
+                <p><strong>Unit Price:</strong> Rs. {{ cart_item.name.price|floatformat:0|default:"0" }}</p>
+                <p><strong>Current Total:</strong> Rs. {{ cart_item.total_price|floatformat:0|default:"0" }}</p>
+              </div>
+            </div>
+            {% if cart_item.order_id == 0 %}
+              <p><span class="badge bg-success">Active Cart Item</span></p>
+            {% else %}
+              <p><span class="badge bg-info">Ordered Item (Order #{{ cart_item.order_id|default:"0" }})</span></p>
+            {% endif %}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="quantity" class="form-label">New Quantity *</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" 
+                       value="{{ cart_item.qty|default:"1" }}" min="1" max="{{ cart_item.name.stock|default:"999" }}" required>
+                <div class="form-text">Available stock: {{ cart_item.name.stock|default:"0" }} units</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">New Total Price</label>
+                <div class="form-control bg-light">
+                  <span id="newTotal">Rs. {{ cart_item.total_price|floatformat:0|default:"0" }}</span>
+                </div>
+                <div class="form-text">Calculated automatically</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning">
+            <h6><i class="bi bi-exclamation-triangle"></i> Important Notes</h6>
+            <ul class="mb-0">
+              <li>Quantity cannot exceed available stock ({{ cart_item.name.stock|default:"0" }} units)</li>
+              <li>Price will be calculated automatically based on quantity</li>
+              <li>This will update the cart item total immediately</li>
+              {% if cart_item.order_id != 0 %}
+              <li><strong>This cart item is already part of an order and cannot be modified</strong></li>
+              {% endif %}
+            </ul>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-submit" {% if cart_item.order_id != 0 %}disabled{% endif %}>
+              <i class="bi bi-save"></i> Update Cart Item
+            </button>
+            <a href="{% url 'admin_cart' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Calculate new total when quantity changes
+      document.getElementById('quantity').addEventListener('input', function() {
+        const quantity = parseInt(this.value) || 0;
+        const unitPrice = parseFloat('{{ cart_item.name.price|default:"0" }}') || 0;
+        const newTotal = quantity * unitPrice;
+        document.getElementById('newTotal').textContent = 'Rs. ' + newTotal.toFixed(0);
+      });
+
+      // Validate quantity on form submit
+      document.querySelector('form').addEventListener('submit', function(e) {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const maxStock = parseInt('{{ cart_item.name.stock|default:"0" }}') || 0;
+        
+        if (quantity > maxStock) {
+          e.preventDefault();
+          alert('Quantity cannot exceed available stock (' + maxStock + ' units)');
+        }
+      });
+
+      // Initialize tooltips
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+    </script>
+  </body>
+</html>

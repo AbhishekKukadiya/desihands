@@ -1,0 +1,328 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Product - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .form-select {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-select:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-submit {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+      }
+      .btn-submit:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .image-preview {
+        width: 200px;
+        height: 200px;
+        border: 2px dashed #e9ecef;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+        overflow: hidden;
+      }
+      .image-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item active">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Edit Product: {{ product.name }}</h1>
+            <p class="text-muted">Update product information</p>
+          </div>
+          <div>
+            <a href="{% url 'admin_products' %}" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> Back to Products
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          
+          <div class="row">
+            <div class="col-md-8">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Product Name *</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ product.name }}" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="price" class="form-label">Price (Rs.) *</label>
+                    <input type="number" class="form-control" id="price" name="price" 
+                           value="{{ product.price }}" step="0.01" min="0" required>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="description" class="form-label">Description *</label>
+                <textarea class="form-control" id="description" name="description" rows="4" required>{{ product.description }}</textarea>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="stock" class="form-label">Stock Quantity *</label>
+                    <input type="number" class="form-control" id="stock" name="stock" 
+                           value="{{ product.stock }}" min="0" required>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="category" class="form-label">Category *</label>
+                    <select class="form-select" id="category" name="category" required>
+                      <option value="">Select Category</option>
+                      {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if cat.id == product.category.id %}selected{% endif %}>
+                          {{ cat.name }}
+                        </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="seller" class="form-label">Seller (Optional)</label>
+                <select class="form-select" id="seller" name="seller">
+                  <option value="">No Seller (Admin Product)</option>
+                  {% for seller in sellers %}
+                    <option value="{{ seller.id }}" {% if product.seller and seller.id == product.seller.id %}selected{% endif %}>
+                      {{ seller.business_name }}
+                    </option>
+                  {% endfor %}
+                </select>
+              </div>
+              
+              <div class="mb-4">
+                <label for="image" class="form-label">Product Image</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                <div class="form-text">Upload a new product image (optional)</div>
+                <div class="image-preview" id="imagePreview">
+                  {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                  {% else %}
+                    <i class="bi bi-image text-muted" style="font-size: 48px;"></i>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="alert alert-info">
+                <h6><i class="bi bi-info-circle"></i> Product Information</h6>
+                <p class="mb-2">Current product details:</p>
+                <ul class="mb-0">
+                  <li><strong>ID:</strong> #{{ product.id }}</li>
+                  <li><strong>Name:</strong> {{ product.name }}</li>
+                  <li><strong>Price:</strong> Rs. {{ product.price }}</li>
+                  <li><strong>Stock:</strong> {{ product.stock }}</li>
+                  <li><strong>Status:</strong> {% if product.is_active %}Active{% else %}Inactive{% endif %}</li>
+                </ul>
+              </div>
+              
+              <div class="alert alert-warning">
+                <h6><i class="bi bi-exclamation-triangle"></i> Important</h6>
+                <p class="mb-0">Changes will be reflected immediately on the store. Make sure to update stock levels accurately.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-submit">
+              <i class="bi bi-check-circle"></i> Update Product
+            </button>
+            <a href="{% url 'admin_products' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.getElementById('image').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('imagePreview');
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+          }
+          reader.readAsDataURL(file);
+        }
+      });
+    </script>
+  </body>
+</html>

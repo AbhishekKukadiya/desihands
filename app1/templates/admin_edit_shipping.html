@@ -1,0 +1,352 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Shipping - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-submit {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+      }
+      .btn-submit:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .info-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .tracking-link {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .tracking-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item active">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Edit Shipping Record</h1>
+            <p class="text-muted">Update shipping information and tracking details</p>
+          </div>
+          <div>
+            <a href="{% url 'admin_shipping' %}" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> Back to Shipping
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form method="POST">
+          {% csrf_token %}
+          
+          <!-- Order Information -->
+          <div class="info-card">
+            <h6><i class="bi bi-info-circle"></i> Order Information</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Order ID:</strong> #{{ shipping_record.order.id }}</p>
+                <p><strong>Customer:</strong> {{ shipping_record.order.user.username }}</p>
+                <p><strong>Order Date:</strong> {{ shipping_record.order.order_date|date:"d M Y" }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Total Amount:</strong> Rs. {{ shipping_record.order.total_amount|floatformat:0 }}</p>
+                <p><strong>Payment Status:</strong> 
+                  <span class="badge bg-{{ shipping_record.order.get_status_color }}">
+                    {{ shipping_record.order.payment_status|title }}
+                  </span>
+                </p>
+                <p><strong>Order Status:</strong> 
+                  <span class="badge bg-{{ shipping_record.order.get_status_color }}">
+                    {{ shipping_record.order.status|title }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="courier_name" class="form-label">Courier Name *</label>
+                <select class="form-select" id="courier_name" name="courier_name" required>
+                  <option value="">Select Courier</option>
+                  <option value="fedex" {% if shipping_record.courier_name == 'fedex' %}selected{% endif %}>FedEx</option>
+                  <option value="dhl" {% if shipping_record.courier_name == 'dhl' %}selected{% endif %}>DHL</option>
+                  <option value="bluedart" {% if shipping_record.courier_name == 'bluedart' %}selected{% endif %}>Blue Dart</option>
+                  <option value="delhivery" {% if shipping_record.courier_name == 'delhivery' %}selected{% endif %}>Delhivery</option>
+                  <option value="ekart" {% if shipping_record.courier_name == 'ekart' %}selected{% endif %}>Ekart</option>
+                  <option value="other" {% if shipping_record.courier_name == 'other' %}selected{% endif %}>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="tracking_number" class="form-label">Tracking Number *</label>
+                <input type="text" class="form-control" id="tracking_number" name="tracking_number" 
+                       value="{{ shipping_record.tracking_number }}" required>
+                <div class="form-text">Unique tracking number for this shipment</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="shipped_date" class="form-label">Shipped Date</label>
+                <input type="datetime-local" class="form-control" id="shipped_date" name="shipped_date"
+                       {% if shipping_record.shipped_date %}value="{{ shipping_record.shipped_date|date:'Y-m-d\TH:i' }}"{% endif %}>
+                <div class="form-text">Leave empty if not yet shipped</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="delivery_date" class="form-label">Delivery Date</label>
+                <input type="datetime-local" class="form-control" id="delivery_date" name="delivery_date"
+                       {% if shipping_record.delivery_date %}value="{{ shipping_record.delivery_date|date:'Y-m-d\TH:i' }}"{% endif %}>
+                <div class="form-text">Leave empty if not yet delivered</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="status" class="form-label">Shipping Status *</label>
+                <select class="form-select" id="status" name="status" required>
+                  <option value="pending" {% if shipping_record.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="shipped" {% if shipping_record.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                  <option value="in_transit" {% if shipping_record.status == 'in_transit' %}selected{% endif %}>In Transit</option>
+                  <option value="delivered" {% if shipping_record.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                  <option value="returned" {% if shipping_record.status == 'returned' %}selected{% endif %}>Returned</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Tracking URL</label>
+                <div class="form-control bg-light">
+                  {% if shipping_record.tracking_number %}
+                    <a href="{{ shipping_record.get_tracking_url }}" target="_blank" class="tracking-link">
+                      Track Package <i class="bi bi-box-arrow-up-right"></i>
+                    </a>
+                  {% else %}
+                    <span class="text-muted">Add tracking number to generate URL</span>
+                  {% endif %}
+                </div>
+                <div class="form-text">Generated automatically based on courier and tracking number</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <h6><i class="bi bi-info-circle"></i> Important Notes</h6>
+            <ul class="mb-0">
+              <li>Tracking number must be unique across all shipments</li>
+              <li>Shipping status will automatically update order status</li>
+              <li>Delivery date will be set automatically when status is changed to "Delivered"</li>
+              <li>Tracking URL is generated based on courier and tracking number</li>
+            </ul>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-submit">
+              <i class="bi bi-save"></i> Update Shipping Record
+            </button>
+            <a href="{% url 'admin_shipping' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Auto-update delivery date when status changes to delivered
+      document.getElementById('status').addEventListener('change', function() {
+        if (this.value === 'delivered' && !document.getElementById('delivery_date').value) {
+          const now = new Date();
+          const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 16);
+          document.getElementById('delivery_date').value = localDateTime;
+        }
+      });
+
+      // Auto-set shipped date when status changes from pending
+      document.getElementById('status').addEventListener('change', function() {
+        const currentStatus = '{{ shipping_record.status }}';
+        if (currentStatus === 'pending' && (this.value === 'shipped' || this.value === 'in_transit') && !document.getElementById('shipped_date').value) {
+          const now = new Date();
+          const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+            .toISOString()
+            .slice(0, 16);
+          document.getElementById('shipped_date').value = localDateTime;
+        }
+      });
+    </script>
+  </body>
+</html>

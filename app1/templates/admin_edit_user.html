@@ -1,0 +1,359 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit User - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-submit {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+      }
+      .btn-submit:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .info-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item active">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Edit User</h1>
+            <p class="text-muted">Update user information and account details</p>
+          </div>
+          <div>
+            <a href="{% url 'admin_users' %}" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> Back to Users
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form method="POST">
+          {% csrf_token %}
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username *</label>
+                <input type="text" class="form-control" id="username" name="username" 
+                       value="{{ user_record.username }}" required>
+                <div class="form-text">Unique username for login</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="email" class="form-label">Email Address *</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                       value="{{ user_record.email }}" required>
+                <div class="form-text">Email must be unique across all users</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone" 
+                       value="{{ user_record.phone }}">
+                <div class="form-text">Contact phone number</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="pincode" class="form-label">Pincode</label>
+                <input type="text" class="form-control" id="pincode" name="pincode" 
+                       value="{{ user_record.pincode }}">
+                <div class="form-text">Postal/ZIP code</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="address" class="form-label">Street Address</label>
+            <textarea class="form-control" id="address" name="address" rows="3">{{ user_record.address }}</textarea>
+            <div class="form-text">Complete street address</div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city" 
+                       value="{{ user_record.city }}">
+                <div class="form-text">City of residence</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="state" class="form-label">State</label>
+                <input type="text" class="form-control" id="state" name="state" 
+                       value="{{ user_record.state }}">
+                <div class="form-text">State of residence</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <h6><i class="bi bi-info-circle"></i> Important Notes</h6>
+            <ul class="mb-0">
+              <li>Username and email are required fields</li>
+              <li>Email must be unique across all users</li>
+              <li>Phone number should include country code if applicable</li>
+              <li>Complete address helps with order delivery</li>
+              <li>Changes will be saved immediately</li>
+            </ul>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-submit">
+              <i class="bi bi-save"></i> Update User
+            </button>
+            <a href="{% url 'admin_users' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Validate email format
+      document.getElementById('email').addEventListener('blur', function() {
+        const email = this.value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (email && !emailRegex.test(email)) {
+          this.setCustomValidity('Please enter a valid email address');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+
+      // Validate phone number format
+      document.getElementById('phone').addEventListener('blur', function() {
+        const phone = this.value.trim();
+        const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+        
+        if (phone && !phoneRegex.test(phone)) {
+          this.setCustomValidity('Please enter a valid phone number');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+
+      // Validate pincode format
+      document.getElementById('pincode').addEventListener('blur', function() {
+        const pincode = this.value.trim();
+        const pincodeRegex = /^\d{6}$/;
+        
+        if (pincode && !pincodeRegex.test(pincode)) {
+          this.setCustomValidity('Pincode should be 6 digits');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+
+      // Format phone number as user types
+      document.getElementById('phone').addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 10) {
+          value = value.slice(0, 10);
+        }
+        this.value = value;
+      });
+
+      // Format pincode as user types
+      document.getElementById('pincode').addEventListener('input', function() {
+        let value = this.value.replace(/\D/g, '');
+        if (value.length > 6) {
+          value = value.slice(0, 6);
+        }
+        this.value = value;
+      });
+
+      // Confirm before leaving if changes are made
+      let formChanged = false;
+      const form = document.querySelector('form');
+      const inputs = form.querySelectorAll('input, textarea');
+      
+      inputs.forEach(input => {
+        input.addEventListener('change', () => {
+          formChanged = true;
+        });
+      });
+
+      window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+          e.preventDefault();
+          e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+        }
+      });
+    </script>
+  </body>
+</html>

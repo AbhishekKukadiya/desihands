@@ -1,0 +1,476 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Orders - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .table-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .table thead th {
+        background: #f8f9fa;
+        border: none;
+        font-weight: 600;
+        color: #333;
+      }
+      .search-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-search {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+      }
+      .btn-search:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .pagination {
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        border: none;
+        color: #333;
+      }
+      .page-link:hover {
+        background: #ffc107;
+        color: #111;
+      }
+      .page-item.active .page-link {
+        background: #ffc107;
+        border-color: #ffc107;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .status-confirmed {
+        background: #cce5ff;
+        color: #004085;
+      }
+      .status-shipped {
+        background: #d1ecf1;
+        color: #0c5460;
+      }
+      .status-delivered {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .payment-paid {
+        background: #d4edda;
+        color: #155724;
+      }
+      .payment-pending {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .payment-failed {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item active">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Manage Orders</h1>
+            <p class="text-muted">View and manage all customer orders</p>
+          </div>
+          <div>
+            <span class="badge bg-primary">
+              {{ page_obj.paginator.count }} Total Orders
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <form method="GET">
+          <div class="row align-items-end">
+            <div class="col-md-3">
+              <label for="search" class="form-label">Search Orders</label>
+              <input type="text" class="form-control" id="search" name="search" 
+                     value="{{ search_query }}" placeholder="Search by ID, customer...">
+            </div>
+            <div class="col-md-3">
+              <label for="status" class="form-label">Order Status</label>
+              <select class="form-select" id="status" name="status">
+                <option value="">All Status</option>
+                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                <option value="shipped" {% if status_filter == 'shipped' %}selected{% endif %}>Shipped</option>
+                <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
+                <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="payment_status" class="form-label">Payment Status</label>
+              <select class="form-select" id="payment_status" name="payment_status">
+                <option value="">All Payment Status</option>
+                <option value="pending" {% if payment_filter == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="paid" {% if payment_filter == 'paid' %}selected{% endif %}>Paid</option>
+                <option value="failed" {% if payment_filter == 'failed' %}selected{% endif %}>Failed</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-search w-100">
+                <i class="bi bi-search"></i> Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Orders Table -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total Amount</th>
+                <th>Order Status</th>
+                <th>Payment</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in page_obj %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">#{{ order.id }}</div>
+                  <small class="text-muted">{{ order.order_date|date:"d M Y" }}</small>
+                </td>
+                <td>
+                  <div>
+                    <div class="fw-semibold">{{ order.user.username }}</div>
+                    <small class="text-muted">{{ order.user.email }}</small>
+                  </div>
+                </td>
+                <td>
+                  <div class="fw-semibold">Rs. {{ order.total_amount|floatformat:0 }}</div>
+                </td>
+                <td>
+                  <span class="status-badge status-{{ order.status }}">
+                    {{ order.status|title }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-badge payment-{{ order.payment_status }}">
+                    {{ order.payment_status|title }}
+                  </span>
+                </td>
+                <td>
+                  <small class="text-muted">
+                    {{ order.order_date|date:"d M Y H:i" }}
+                  </small>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <a href="{% url 'admin_order_detail' order.id %}" 
+                       class="btn btn-sm btn-outline-primary" title="View Details">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    {% if order.status != 'delivered' and order.status != 'cancelled' %}
+                      <button class="btn btn-sm btn-outline-warning update-status-btn" 
+                              title="Update Status"
+                              data-order-id="{{ order.id }}"
+                              data-order-status="{{ order.status|escapejs }}">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <i class="bi bi-cart-check" style="font-size: 48px; color: #ccc;"></i>
+                  <p class="text-muted mt-2">No orders found</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Orders pagination">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment_status={{ payment_filter }}{% endif %}">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment_status={{ payment_filter }}{% endif %}">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment_status={{ payment_filter }}{% endif %}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment_status={{ payment_filter }}{% endif %}">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if payment_filter %}&payment_status={{ payment_filter }}{% endif %}">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div class="modal fade" id="statusModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Order Status</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <form method="POST" id="statusForm">
+            {% csrf_token %}
+            <div class="modal-body">
+              <input type="hidden" name="order_id" id="orderId">
+              <div class="mb-3">
+                <label for="status" class="form-label">New Status</label>
+                <select class="form-select" name="status" id="statusSelect">
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Update Status</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Add event listeners to all update status buttons
+        var updateButtons = document.querySelectorAll('.update-status-btn');
+        updateButtons.forEach(function(button) {
+          button.addEventListener('click', function() {
+            var orderId = this.getAttribute('data-order-id');
+            var orderStatus = this.getAttribute('data-order-status');
+            
+            document.getElementById('orderId').value = orderId;
+            document.getElementById('statusSelect').value = orderStatus;
+            
+            // Set form action
+            document.getElementById('statusForm').action = '/admin-panel/orders/update-status/' + orderId + '/';
+            
+            // Show modal using Bootstrap 5
+            var modal = new bootstrap.Modal(document.getElementById('statusModal'));
+            modal.show();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

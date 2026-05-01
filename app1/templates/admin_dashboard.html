@@ -1,0 +1,459 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Desi Hands</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .stats-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s;
+        border-left: 4px solid #ffc107;
+      }
+      .stats-card:hover {
+        transform: translateY(-5px);
+      }
+      .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+      .stats-number {
+        font-size: 32px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .stats-label {
+        color: #6c757d;
+        font-size: 14px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .page-subtitle {
+        color: #6c757d;
+      }
+      .table-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .table thead th {
+        background: #f8f9fa;
+        border: none;
+        font-weight: 600;
+        color: #333;
+      }
+      .badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+      .btn-action {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+        margin: 0 2px;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .chart-container {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item active">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Welcome back! Here's what's happening with your store today.</p>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <a href="/" class="btn btn-outline-success">
+              <i class="bi bi-house-door"></i> Go to Website
+            </a>
+            <span class="text-muted">
+              <i class="bi bi-clock"></i> 
+              {% now "j F Y, H:i" %}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="stats-card">
+            <div class="stats-icon" style="background: #e3f2fd; color: #2196f3;">
+              <i class="bi bi-people"></i>
+            </div>
+            <div class="stats-number">{{ total_users }}</div>
+            <div class="stats-label">Total Users</div>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="stats-card">
+            <div class="stats-icon" style="background: #f3e5f5; color: #9c27b0;">
+              <i class="bi bi-shop"></i>
+            </div>
+            <div class="stats-number">{{ total_sellers }}</div>
+            <div class="stats-label">Total Sellers</div>
+            {% if pending_sellers > 0 %}
+              <small class="text-warning">
+                <i class="bi bi-exclamation-triangle"></i> {{ pending_sellers }} pending
+              </small>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="stats-card">
+            <div class="stats-icon" style="background: #e8f5e8; color: #4caf50;">
+              <i class="bi bi-box"></i>
+            </div>
+            <div class="stats-number">{{ total_products }}</div>
+            <div class="stats-label">Total Products</div>
+            <small class="text-muted">{{ active_products }} active</small>
+          </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="stats-card">
+            <div class="stats-icon" style="background: #fff3e0; color: #ff9800;">
+              <i class="bi bi-cart-check"></i>
+            </div>
+            <div class="stats-number">{{ total_orders }}</div>
+            <div class="stats-label">Total Orders</div>
+            {% if pending_orders > 0 %}
+              <small class="text-warning">
+                <i class="bi bi-clock"></i> {{ pending_orders }} pending
+              </small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue and Charts Row -->
+      <div class="row mb-4">
+        <div class="col-lg-4 mb-4">
+          <div class="stats-card">
+            <div class="stats-icon" style="background: #e8f5e8; color: #4caf50;">
+              <i class="bi bi-currency-rupee"></i>
+            </div>
+            <div class="stats-number">Rs. {{ total_revenue|floatformat:0 }}</div>
+            <div class="stats-label">Total Revenue</div>
+            <small class="text-muted">All time sales</small>
+          </div>
+        </div>
+        
+        <div class="col-lg-8 mb-4">
+          <div class="table-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0">
+                <i class="bi bi-clock-history text-primary"></i> Recent Orders
+              </h5>
+              <a href="{% url 'admin_orders' %}" class="btn btn-sm btn-outline-primary">
+                View All <i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in recent_orders %}
+                  <tr>
+                    <td>
+                      <a href="{% url 'admin_order_detail' order.id %}" class="text-decoration-none fw-bold">
+                        #{{ order.id }}
+                      </a>
+                    </td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                          <i class="bi bi-person text-muted"></i>
+                        </div>
+                        <div>
+                          <div class="fw-semibold">{{ order.user.username }}</div>
+                          <small class="text-muted">{{ order.user.email|truncatechars:20 }}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span class="badge bg-light text-dark">{{ order.items.count }} items</span>
+                    </td>
+                    <td>
+                      <div class="fw-semibold text-primary">Rs. {{ order.total_amount|floatformat:0 }}</div>
+                    </td>
+                    <td>
+                      <span class="badge bg-{% if order.payment_status == 'paid' %}success{% elif order.payment_status == 'pending' %}warning{% else %}danger{% endif %}">
+                        {{ order.payment_status|title }}
+                      </span>
+                    </td>
+                    <td>
+                      {% if order.status == 'delivered' %}
+                        <span class="badge bg-success">
+                          <i class="bi bi-check-circle"></i> Delivered
+                        </span>
+                      {% elif order.status == 'cancelled' %}
+                        <span class="badge bg-danger">
+                          <i class="bi bi-x-circle"></i> Cancelled
+                        </span>
+                      {% elif order.status == 'shipped' %}
+                        <span class="badge bg-info">
+                          <i class="bi bi-truck"></i> Shipped
+                        </span>
+                      {% elif order.status == 'processing' %}
+                        <span class="badge bg-primary">
+                          <i class="bi bi-gear"></i> Processing
+                        </span>
+                      {% else %}
+                        <span class="badge bg-warning">
+                          <i class="bi bi-clock"></i> Pending
+                        </span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <div class="small">
+                        <div>{{ order.order_date|date:"d M" }}</div>
+                        <div class="text-muted">{{ order.order_date|time:"H:i" }}</div>
+                      </div>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="7" class="text-center py-4">
+                      <div class="text-muted">
+                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                        <p class="mb-0 mt-2">No recent orders found</p>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Products -->
+      <div class="row">
+        <div class="col-lg-6 mb-4">
+          <div class="table-card">
+            <h5 class="mb-3">Top Selling Products</h5>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Units Sold</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for product in top_products %}
+                  <tr>
+                    <td>{{ product.product__name }}</td>
+                    <td>{{ product.total_sold }}</td>
+                    <td>Rs. {{ product.revenue|floatformat:0 }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-6 mb-4">
+          <div class="table-card">
+            <h5 class="mb-3">Quick Actions</h5>
+            <div class="d-grid gap-3">
+              <a href="{% url 'admin_sellers' %}" class="btn btn-outline-primary">
+                <i class="bi bi-person-check"></i> Review Pending Sellers
+                {% if pending_sellers > 0 %}
+                  <span class="badge bg-warning ms-2">{{ pending_sellers }}</span>
+                {% endif %}
+              </a>
+              <a href="{% url 'admin_orders' %}" class="btn btn-outline-info">
+                <i class="bi bi-cart-check"></i> Manage Orders
+                {% if pending_orders > 0 %}
+                  <span class="badge bg-warning ms-2">{{ pending_orders }}</span>
+                {% endif %}
+              </a>
+              <a href="{% url 'admin_products' %}" class="btn btn-outline-success">
+                <i class="bi bi-box"></i> Manage Products
+              </a>
+              <a href="{% url 'admin_categories' %}" class="btn btn-outline-warning">
+                <i class="bi bi-tags"></i> Manage Categories
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

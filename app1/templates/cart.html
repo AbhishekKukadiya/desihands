@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+/* FLIPKART-STYLE RESPONSIVE CART PAGE */
+.cart-container{background:white;border-radius:15px;box-shadow:0 15px 40px rgba(0,0,0,0.15);overflow:hidden;margin:40px auto;max-width:1200px;}
+.cart-header{background:#212529;color:#ffc107;padding:40px 30px;text-align:center;position:relative;}
+.cart-header::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg, #ffc107, #ffcd39, #ffc107);}
+.cart-header h2{font-weight:700;font-size:2.5rem;margin-bottom:10px;text-shadow:2px 2px 4px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;}
+.cart-header h2 i{margin-right:15px;font-size:2.8rem;}
+.cart-body{padding:50px 40px;}
+.product-image{width:100px;height:100px;object-fit:cover;border-radius:12px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+.product-image-placeholder{width:100px;height:100px;background:#f8f9fa;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+.cart-table{background:white;border-radius:12px;overflow:hidden;}
+.cart-table thead{background:#f8f9fa;}
+.cart-table th{font-weight:600;color:#333;padding:20px 15px;font-size:1.1rem;border:none;}
+.cart-table td{padding:20px 15px;vertical-align:middle;border-bottom:1px solid #f0f0f0;}
+.cart-table tr:hover{background:#f8f9fa;}
+.product-name{font-weight:600;color:#333;font-size:1.1rem;}
+.product-price{color:#28a745;font-weight:700;font-size:1.1rem;}
+.product-total{color:#007bff;font-weight:700;font-size:1.2rem;}
+.quantity-controls{display:flex;align-items:center;gap:10px;justify-content:center;}
+.quantity-btn{width:35px;height:35px;border-radius:50%;border:none;background:#ffc107;color:#000;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(255, 193, 7, 0.3);}
+.quantity-btn:hover{background:#e0a800;transform:scale(1.1);box-shadow:0 6px 20px rgba(255, 193, 7, 0.4);}
+.quantity-display{min-width:40px;text-align:center;font-weight:700;font-size:1.1rem;}
+.btn-remove{background:#dc3545;color:white;border:none;padding:8px 16px;border-radius:8px;font-weight:600;transition:all 0.3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.btn-remove:hover{background:#c82333;transform:translateY(-2px);}
+.cart-summary{background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);border-radius:15px;padding:30px;margin-top:40px;text-align:right;box-shadow:0 8px 25px rgba(0,0,0,0.1);}
+.total-amount{font-size:1.8rem;font-weight:700;color:#333;margin-bottom:20px;}
+.total-amount .text-success{color:#28a745;}
+.btn-checkout{background:linear-gradient(45deg, #ffc107, #ffca2c);color:#111;border:none;border-radius:12px;padding:15px 40px;font-weight:600;font-size:1.2rem;transition:all 0.3s ease;box-shadow:0 8px 25px rgba(255, 193, 7, 0.3);text-decoration:none;display:inline-flex;align-items:center;gap:10px;}
+.btn-checkout:hover{background:linear-gradient(45deg, #ffca2c, #ffc107);transform:translateY(-3px);box-shadow:0 12px 35px rgba(255, 193, 7, 0.4);}
+.cart-empty{text-align:center;padding:60px 20px;background:white;border-radius:15px;box-shadow:0 8px 25px rgba(0,0,0,0.1);}
+.cart-empty i{font-size:5rem;color:#ffc107;margin-bottom:20px;}
+.cart-empty h3{color:#333;margin-bottom:15px;font-size:1.8rem;}
+.cart-empty p{color:#666;margin-bottom:30px;font-size:1.1rem;}
+.btn-continue{background:linear-gradient(45deg, #ffc107, #ffca2c);color:#111;border:none;border-radius:4px;padding:4px 12px;font-weight:400;font-size:0.85rem;transition:all 0.3s ease;box-shadow:0 1px 4px rgba(255, 193, 7, 0.2);text-decoration:none;display:inline-flex;align-items:center;gap:4px;}
+.btn-continue:hover{background:linear-gradient(45deg, #ffca2c, #ffc107);transform:translateY(-2px);}
+
+/* TABLET AND BELOW (768px and down) */
+@media(max-width:768px){
+.cart-container{margin:30px 10px;border-radius:12px;}
+.cart-header{padding:30px 20px;}
+.cart-header h2{font-size:2rem;}
+.cart-header h2 i{font-size:2.3rem;margin-right:10px;}
+.cart-body{padding:35px 25px;}
+.product-image{width:80px;height:80px;border-radius:10px;}
+.product-image-placeholder{width:80px;height:80px;border-radius:10px;}
+.cart-table th{padding:15px 10px;font-size:1rem;}
+.cart-table td{padding:15px 10px;}
+.product-name{font-size:1rem;}
+.product-price{font-size:1rem;}
+.product-total{font-size:1.1rem;}
+.quantity-btn{width:30px;height:30px;}
+.quantity-display{min-width:35px;font-size:1rem;}
+.btn-remove{padding:6px 12px;font-size:0.9rem;}
+.cart-summary{padding:20px;margin-top:30px;}
+.total-amount{font-size:1.5rem;}
+.btn-checkout{font-size:1rem;padding:12px 30px;}
+.cart-empty{padding:40px 15px;}
+.cart-empty i{font-size:4rem;}
+.cart-empty h3{font-size:1.5rem;}
+.cart-empty p{font-size:1rem;}
+.btn-continue{font-size:0.8rem;padding:4px 12px;}
+}
+
+/* MOBILE PHONES (576px and down) */
+@media(max-width:576px){
+.cart-container{margin:20px 5px;border-radius:10px;}
+.cart-header{padding:25px 15px;}
+.cart-header h2{font-size:1.6rem;}
+.cart-header h2 i{font-size:1.8rem;margin-right:8px;}
+.cart-body{padding:25px 15px;}
+.product-image{width:60px;height:60px;border-radius:8px;}
+.product-image-placeholder{width:60px;height:60px;border-radius:8px;}
+.cart-table{display:block;overflow:hidden;}
+.cart-table thead{display:none;}
+.cart-table tbody,.cart-table tr,.cart-table td{display:block;width:100%;}
+.cart-table tr{margin-bottom:20px;border:2px solid #f0f0f0;border-radius:12px;padding:20px;background:white;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+.cart-table td{text-align:left!important;padding:10px 0;border:none;position:relative;padding-left:120px;}
+.cart-table td:before{content:attr(data-label);position:absolute;left:15px;font-weight:600;color:#6c757d;font-size:0.9rem;}
+.cart-table td:first-child{padding-left:15px;}
+.cart-table td:first-child:before{display:none;}
+.product-name{font-size:0.95rem;margin-bottom:10px;}
+.product-price{font-size:0.95rem;}
+.product-total{font-size:1rem;margin-top:10px;}
+.quantity-controls{justify-content:flex-start;margin-top:10px;}
+.quantity-btn{width:28px;height:28px;}
+.quantity-display{min-width:30px;font-size:0.9rem;}
+.btn-remove{margin-top:15px;width:100%;justify-content:center;padding:10px;}
+.cart-summary{padding:15px;margin-top:25px;text-align:center;}
+.total-amount{font-size:1.3rem;text-align:center;}
+.btn-checkout{font-size:1rem;padding:12px 30px;width:100%;justify-content:center;}
+.cart-empty{padding:30px 10px;}
+.cart-empty i{font-size:3rem;}
+.cart-empty h3{font-size:1.3rem;}
+.cart-empty p{font-size:0.9rem;}
+.btn-continue{font-size:0.8rem;padding:6px 12px;width:100%;justify-content:center;}
+}
+
+/* SMALL MOBILE PHONES (480px and down) */
+@media(max-width:480px){
+.cart-container{margin:15px 2px;border-radius:8px;}
+.cart-header{padding:20px 10px;}
+.cart-header h2{font-size:1.4rem;}
+.cart-header h2 i{font-size:1.6rem;margin-right:6px;}
+.cart-body{padding:20px 10px;}
+.product-image{width:50px;height:50px;border-radius:6px;}
+.product-image-placeholder{width:50px;height:50px;border-radius:6px;}
+.cart-table tr{padding:15px;}
+.cart-table td{padding-left:100px;}
+.cart-table td:before{left:10px;font-size:0.85rem;}
+.product-name{font-size:0.9rem;}
+.product-price{font-size:0.9rem;}
+.product-total{font-size:0.95rem;}
+.quantity-btn{width:25px;height:25px;}
+.quantity-display{min-width:25px;font-size:0.85rem;}
+.btn-remove{padding:8px 10px;font-size:0.85rem;}
+.cart-summary{padding:12px;margin-top:20px;}
+.total-amount{font-size:1.2rem;}
+.btn-checkout{font-size:0.9rem;padding:8px 20px;}
+.cart-empty{padding:25px 8px;}
+.cart-empty i{font-size:2.5rem;}
+.cart-empty h3{font-size:1.2rem;}
+.cart-empty p{font-size:0.85rem;}
+.btn-continue{font-size:0.75rem;padding:4px 10px;}
+}
+
+/* VERY SMALL MOBILE PHONES (360px and down) */
+@media(max-width:360px){
+.cart-header h2{font-size:1.2rem;}
+.cart-header h2 i{font-size:1.4rem;}
+.cart-body{padding:15px 8px;}
+.cart-table tr{padding:12px;}
+.cart-table td{padding-left:85px;}
+.product-name{font-size:0.85rem;}
+.product-price{font-size:0.85rem;}
+.product-total{font-size:0.9rem;}
+.quantity-btn{width:22px;height:22px;}
+.quantity-display{min-width:20px;font-size:0.8rem;}
+.btn-remove{font-size:0.8rem;padding:6px 8px;}
+.cart-summary{padding:10px;}
+.total-amount{font-size:1.1rem;}
+.btn-checkout{font-size:0.85rem;padding:6px 15px;}
+.cart-empty i{font-size:2rem;}
+.cart-empty h3{font-size:1.1rem;}
+.cart-empty p{font-size:0.8rem;}
+.btn-continue{font-size:0.75rem;padding:3px 8px;}
+}
+
+/* TOUCH OPTIMIZATIONS */
+@media(max-width:768px){
+.quantity-btn,.btn-remove,.btn-checkout,.btn-continue{min-height:44px;touch-action:manipulation;}
+}
+
+/* LANDSCAPE ORIENTATIONS */
+@media(max-width:768px) and (orientation:landscape){
+.cart-header{padding:20px 15px;}
+.cart-body{padding:25px 20px;}
+.cart-summary{padding:20px;}
+}
+
+/* ACCESSIBILITY IMPROVEMENTS */
+@media(prefers-reduced-motion: reduce){
+.quantity-btn,.btn-remove,.btn-checkout,.btn-continue{transition:none;}
+}
+</style>
+
+<div class="cart-container">
+    <div class="cart-header">
+        <h2>
+            <i class="bi bi-cart3"></i>
+            My Cart
+        </h2>
+    </div>
+
+    <div class="cart-body">
+        {% if cart_items %}
+            <div class="table-responsive">
+                <table class="table cart-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td data-label="Image">
+                                {% if item.name.image %}
+                                    <img src="{{ item.name.image.url }}" class="product-image" alt="{{ item.name.name }}">
+                                {% else %}
+                                    <div class="product-image-placeholder">
+                                        <i class="bi bi-image text-muted"></i>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td data-label="Product" class="product-name">
+                                {{ item.name.name }}
+                            </td>
+                            <td data-label="Price" class="product-price">
+                                ₹{{ item.name.price }}
+                            </td>
+                            <td data-label="Quantity">
+                                <div class="quantity-controls">
+                                    <button type="button" class="quantity-btn" onclick="updateQuantity('{{ item.id }}', 'decrease')">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <span class="quantity-display" id="qty-{{ item.id }}">
+                                        {{ item.qty }}
+                                    </span>
+                                    <button type="button" class="quantity-btn" onclick="updateQuantity('{{ item.id }}', 'increase')">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td data-label="Total" class="product-total" id="total-{{ item.id }}">
+                                ₹{{ item.total_price }}
+                            </td>
+                            <td data-label="Action">
+                                <a href="{% url 'remove_cart' item.id %}" class="btn-remove">
+                                    <i class="bi bi-trash"></i> Remove
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="cart-summary">
+                <div class="total-amount">
+                    Total Amount : <span class="text-success" id="cart-total">₹ {{ total }}</span>
+                </div>
+                <a href="{% url 'checkout' %}" class="btn-checkout">
+                    <i class="bi bi-credit-card"></i>
+                    Proceed to Checkout
+                </a>
+            </div>
+        {% else %}
+            <div class="cart-empty">
+                <i class="bi bi-cart-x"></i>
+                <h3>Your cart is empty</h3>
+                <p>Add some products to your cart</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function updateQuantity(itemId, action) {
+    const url = action === 'increase' ? `/increase/${itemId}/` : `/decrease/${itemId}/`;
+    
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.item_removed) {
+                // Remove the entire row if item was deleted
+                const row = document.querySelector(`#qty-${itemId}`).closest('tr');
+                row.remove();
+                
+                // Check if cart is empty
+                const tbody = document.querySelector('tbody');
+                if (!tbody.querySelector('tr')) {
+                    location.reload(); // Reload to show empty cart message
+                }
+            } else {
+                // Update quantity display
+                document.getElementById(`qty-${itemId}`).textContent = data.qty;
+                // Update item total
+                document.getElementById(`total-${itemId}`).textContent = `₹${data.total_price}`;
+            }
+            // Update cart total
+            document.getElementById('cart-total').textContent = `₹${data.cart_total}`;
+        } else {
+            alert(data.message || 'Error updating quantity');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating quantity. Please try again.');
+    });
+}
+</script>
+
+{% endblock %}

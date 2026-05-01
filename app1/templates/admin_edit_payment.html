@@ -1,0 +1,343 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Payment - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-submit {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+      }
+      .btn-submit:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .info-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .transaction-id {
+        font-family: monospace;
+        background: #e9ecef;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item active">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Edit Payment Record</h1>
+            <p class="text-muted">Update payment transaction details and status</p>
+          </div>
+          <div>
+            <a href="{% url 'admin_payments' %}" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> Back to Payments
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form method="POST">
+          {% csrf_token %}
+          
+          <!-- Order Information -->
+          <div class="info-card">
+            <h6><i class="bi bi-info-circle"></i> Order Information</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Order ID:</strong> <a href="{% url 'admin_order_detail' payment_record.order.id %}" class="text-decoration-none">#{{ payment_record.order.id }}</a></p>
+                <p><strong>Customer:</strong> {{ payment_record.order.user.username }}</p>
+                <p><strong>Email:</strong> {{ payment_record.order.user.email }}</p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Order Date:</strong> {{ payment_record.order.order_date|date:"d M Y H:i" }}</p>
+                <p><strong>Order Amount:</strong> Rs. {{ payment_record.order.total_amount|floatformat:0 }}</p>
+                <p><strong>Order Status:</strong> 
+                  <span class="badge bg-{{ payment_record.order.get_status_color }}">
+                    {{ payment_record.order.status|title }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="payment_method" class="form-label">Payment Method *</label>
+                <select class="form-select" id="payment_method" name="payment_method" required>
+                  <option value="">Select Payment Method</option>
+                  <option value="razorpay" {% if payment_record.payment_method == 'razorpay' %}selected{% endif %}>Razorpay</option>
+                  <option value="cod" {% if payment_record.payment_method == 'cod' %}selected{% endif %}>Cash on Delivery</option>
+                  <option value="credit_card" {% if payment_record.payment_method == 'credit_card' %}selected{% endif %}>Credit Card</option>
+                  <option value="debit_card" {% if payment_record.payment_method == 'debit_card' %}selected{% endif %}>Debit Card</option>
+                  <option value="netbanking" {% if payment_record.payment_method == 'netbanking' %}selected{% endif %}>Net Banking</option>
+                  <option value="upi" {% if payment_record.payment_method == 'upi' %}selected{% endif %}>UPI</option>
+                  <option value="wallet" {% if payment_record.payment_method == 'wallet' %}selected{% endif %}>Wallet</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="transaction_id" class="form-label">Transaction ID *</label>
+                <input type="text" class="form-control" id="transaction_id" name="transaction_id" 
+                       value="{{ payment_record.transaction_id }}" required>
+                <div class="form-text">Unique transaction identifier</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="amount" class="form-label">Amount (Rs.) *</label>
+                <input type="number" class="form-control" id="amount" name="amount" 
+                       value="{{ payment_record.amount }}" step="0.01" min="0" required>
+                <div class="form-text">Payment amount in rupees</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="status" class="form-label">Payment Status *</label>
+                <select class="form-select" id="status" name="status" required>
+                  <option value="pending" {% if payment_record.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="paid" {% if payment_record.status == 'paid' %}selected{% endif %}>Paid</option>
+                  <option value="failed" {% if payment_record.status == 'failed' %}selected{% endif %}>Failed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="payment_date" class="form-label">Payment Date</label>
+                <input type="datetime-local" class="form-control" id="payment_date" name="payment_date"
+                       value="{{ payment_record.payment_date|date:'Y-m-d\TH:i' }}">
+                <div class="form-text">Date and time of payment transaction</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">Current Transaction ID</label>
+                <div class="form-control bg-light">
+                  <span class="transaction-id">{{ payment_record.transaction_id }}</span>
+                </div>
+                <div class="form-text">Original transaction ID from payment gateway</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning">
+            <h6><i class="bi bi-exclamation-triangle"></i> Important Notes</h6>
+            <ul class="mb-0">
+              <li>Transaction ID must be unique across all payment records</li>
+              <li>Changing payment status to "Paid" will update the order payment status</li>
+              <li>Amount should match the order total for consistency</li>
+              <li>Payment date helps track transaction timeline</li>
+            </ul>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-submit">
+              <i class="bi bi-save"></i> Update Payment Record
+            </button>
+            <a href="{% url 'admin_payments' %}" class="btn btn-secondary">
+              <i class="bi bi-x-circle"></i> Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Auto-update order payment status when payment status changes
+      document.getElementById('status').addEventListener('change', function() {
+        if (this.value === 'paid') {
+          console.log('Payment marked as paid - order payment status will be updated');
+        }
+      });
+
+      // Format amount to 2 decimal places on blur
+      document.getElementById('amount').addEventListener('blur', function() {
+        const value = parseFloat(this.value);
+        if (!isNaN(value)) {
+          this.value = value.toFixed(2);
+        }
+      });
+
+      // Validate transaction ID uniqueness (client-side check)
+      document.getElementById('transaction_id').addEventListener('blur', function() {
+        const transactionId = this.value.trim();
+        if (transactionId && transactionId.length < 5) {
+          this.setCustomValidity('Transaction ID should be at least 5 characters long');
+        } else {
+          this.setCustomValidity('');
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,452 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .table-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .table thead th {
+        background: #f8f9fa;
+        border: none;
+        font-weight: 600;
+        color: #333;
+      }
+      .search-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-search {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+      }
+      .btn-search:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ffc107;
+        color: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .pagination {
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        border: none;
+        color: #333;
+      }
+      .page-link:hover {
+        background: #ffc107;
+        color: #111;
+      }
+      .page-item.active .page-link {
+        background: #ffc107;
+        border-color: #ffc107;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item active">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Manage Users</h1>
+            <p class="text-muted">View and manage all registered users</p>
+          </div>
+          <div>
+            <span class="badge bg-primary">
+              {{ page_obj.paginator.count }} Total Users
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <form method="GET">
+          <div class="row align-items-end">
+            <div class="col-md-8">
+              <label for="search" class="form-label">Search Users</label>
+              <input type="text" class="form-control" id="search" name="search" 
+                     value="{{ search_query }}" placeholder="Search by username, email, or phone...">
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-search w-100">
+                <i class="bi bi-search"></i> Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Users Table -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Contact</th>
+                <th>Location</th>
+                <th>Joined</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in page_obj %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="user-avatar me-3">
+                      {{ user.username.0 }}
+                    </div>
+                    <div>
+                      <div class="fw-semibold">{{ user.username }}</div>
+                      <small class="text-muted">ID: #{{ user.id }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <div><i class="bi bi-envelope"></i> {{ user.email }}</div>
+                    <div><i class="bi bi-phone"></i> {{ user.phone }}</div>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <div>{{ user.city }}, {{ user.state }}</div>
+                    <small class="text-muted">{{ user.pincode }}</small>
+                  </div>
+                </td>
+                <td>
+                  <small class="text-muted">
+                    <i class="bi bi-calendar"></i> 
+                    {{ user.id|default_if_none:"N/A" }}
+                  </small>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <a href="#" class="btn btn-sm btn-outline-primary" title="View Details" data-bs-toggle="tooltip">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'admin_edit_user' user.id %}" class="btn btn-sm btn-outline-warning" title="Edit User" data-bs-toggle="tooltip">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    {% if user.username != 'admin' %}
+                    <button type="button" class="btn btn-sm btn-outline-danger" title="Delete User" 
+                            data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.id }}">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    {% else %}
+                    <button class="btn btn-sm btn-outline-secondary" title="Cannot Delete Admin" disabled>
+                      <i class="bi bi-shield-lock"></i>
+                    </button>
+                    {% endif %}
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <i class="bi bi-people" style="font-size: 48px; color: #ccc;"></i>
+                  <p class="text-muted mt-2">No users found</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Users pagination">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modals -->
+    {% for user in page_obj %}
+      {% if user.username != 'admin' %}
+      <div class="modal fade" id="deleteModal{{ user.id }}" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Confirm Delete User</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Warning:</strong> This action cannot be undone!
+              </div>
+              <p>Are you sure you want to delete the following user?</p>
+              <div class="bg-light p-3 rounded">
+                <strong>{{ user.username }}</strong><br>
+                <small class="text-muted">{{ user.email }}</small><br>
+                <small class="text-muted">ID: #{{ user.id }}</small>
+              </div>
+              <p class="mb-0 mt-3">
+                <small class="text-muted">
+                  <i class="bi bi-info-circle"></i> 
+                  All associated orders and cart items will also be affected.
+                </small>
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle"></i> Cancel
+              </button>
+              <a href="{% url 'admin_delete_user' user.id %}" class="btn btn-danger">
+                <i class="bi bi-trash"></i> Delete User
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Initialize tooltips
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      });
+
+      // Search functionality
+      document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('tbody tr');
+        
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          if (text.includes(searchValue)) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      });
+
+      // Clear search
+      document.getElementById('clearSearch').addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          row.style.display = '';
+        });
+      });
+    </script>
+  </body>
+</html>

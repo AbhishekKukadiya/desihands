@@ -1,0 +1,451 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Products - Admin Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <style>
+      body {
+        background: #f6f7fb;
+        font-family: "Segoe UI", sans-serif;
+      }
+      .sidebar {
+        background: #111;
+        min-height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        z-index: 1000;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+      }
+      .admin-logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-menu {
+        padding: 20px 0;
+      }
+      .sidebar-item {
+        display: block;
+        padding: 12px 20px;
+        color: #ccc;
+        text-decoration: none;
+        transition: all 0.3s;
+        border-left: 3px solid transparent;
+      }
+      .sidebar-item:hover {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+        text-decoration: none;
+      }
+      .sidebar-item.active {
+        background: #222;
+        color: #ffc107;
+        border-left-color: #ffc107;
+      }
+      .sidebar-item i {
+        width: 20px;
+        margin-right: 10px;
+      }
+      .page-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+      }
+      .table-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .table thead th {
+        background: #f8f9fa;
+        border: none;
+        font-weight: 600;
+        color: #333;
+      }
+      .search-box {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      }
+      .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+      }
+      .form-control:focus {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+      }
+      .btn-search {
+        background: #ffc107;
+        color: #111;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+      }
+      .btn-search:hover {
+        background: #e0a800;
+        color: #111;
+      }
+      .product-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+      .pagination {
+        justify-content: center;
+        margin-top: 20px;
+      }
+      .page-link {
+        border-radius: 8px;
+        margin: 0 2px;
+        border: none;
+        color: #333;
+      }
+      .page-link:hover {
+        background: #ffc107;
+        color: #111;
+      }
+      .page-item.active .page-link {
+        background: #ffc107;
+        border-color: #ffc107;
+      }
+      .logout-btn {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+      }
+      .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-active {
+        background: #d4edda;
+        color: #155724;
+      }
+      .status-inactive {
+        background: #f8d7da;
+        color: #721c24;
+      }
+      .stock-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .stock-good {
+        background: #d4edda;
+        color: #155724;
+      }
+      .stock-low {
+        background: #fff3cd;
+        color: #856404;
+      }
+      .stock-out {
+        background: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'admin_dashboard' %}" class="admin-logo">
+          <i class="bi bi-shield-check"></i> Admin Panel
+        </a>
+      </div>
+      
+      <div class="sidebar-menu">
+        <a href="{% url 'admin_dashboard' %}" class="sidebar-item">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+        <a href="{% url 'admin_users' %}" class="sidebar-item">
+          <i class="bi bi-people"></i> Users
+        </a>
+        <a href="{% url 'admin_sellers' %}" class="sidebar-item">
+          <i class="bi bi-shop"></i> Sellers
+        </a>
+        <a href="{% url 'admin_products' %}" class="sidebar-item active">
+          <i class="bi bi-box"></i> Products
+        </a>
+        <a href="{% url 'admin_orders' %}" class="sidebar-item">
+          <i class="bi bi-cart-check"></i> Orders
+        </a>
+        <a href="{% url 'admin_categories' %}" class="sidebar-item">
+          <i class="bi bi-tags"></i> Categories
+        </a>
+        <a href="{% url 'admin_shipping' %}" class="sidebar-item">
+          <i class="bi bi-truck"></i> Shipping
+        </a>
+        <a href="{% url 'admin_payments' %}" class="sidebar-item">
+          <i class="bi bi-credit-card"></i> Payments
+        </a>
+        <a href="{% url 'admin_cart' %}" class="sidebar-item">
+          <i class="bi bi-cart"></i> Cart
+        </a>
+      </div>
+      
+      <div class="logout-btn">
+        <a href="{% url 'admin_logout' %}" class="btn btn-danger btn-sm w-100">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="page-title">Manage Products</h1>
+            <p class="text-muted">View and manage all products in the store</p>
+          </div>
+          <div>
+            <a href="{% url 'admin_add_product' %}" class="btn btn-primary me-2">
+              <i class="bi bi-plus-circle"></i> Add Product
+            </a>
+            <span class="badge bg-primary">
+              {{ page_obj.paginator.count }} Total Products
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-box">
+        <form method="GET">
+          <div class="row align-items-end">
+            <div class="col-md-3">
+              <label for="search" class="form-label">Search Products</label>
+              <input type="text" class="form-control" id="search" name="search" 
+                     value="{{ search_query }}" placeholder="Search by name...">
+            </div>
+            <div class="col-md-3">
+              <label for="category" class="form-label">Category</label>
+              <select class="form-select" id="category" name="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                  <option value="{{ cat.id }}" {% if category_filter == cat.id|stringformat:"s" %}selected{% endif %}>
+                    {{ cat.name }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="status" class="form-label">Status</label>
+              <select class="form-select" id="status" name="status">
+                <option value="">All Status</option>
+                <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <button type="submit" class="btn btn-search w-100">
+                <i class="bi bi-search"></i> Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Products Table -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Seller</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in page_obj %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    {% if product.image %}
+                      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image me-3">
+                    {% else %}
+                      <div class="product-image me-3 d-flex align-items-center justify-content-center bg-light">
+                        <i class="bi bi-image text-muted"></i>
+                      </div>
+                    {% endif %}
+                    <div>
+                      <div class="fw-semibold">{{ product.name }}</div>
+                      <small class="text-muted">{{ product.description|truncatechars:50 }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge bg-info">{{ product.category.name }}</span>
+                </td>
+                <td>
+                  {% if product.seller %}
+                    <div>
+                      <div class="fw-semibold">{{ product.seller.business_name }}</div>
+                      <small class="text-muted">@{{ product.seller.username }}</small>
+                    </div>
+                  {% else %}
+                    <span class="text-muted">No seller</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="fw-semibold">Rs. {{ product.price|floatformat:0 }}</div>
+                </td>
+                <td>
+                  {% if product.stock > 10 %}
+                    <span class="stock-badge stock-good">{{ product.stock }} units</span>
+                  {% elif product.stock > 0 %}
+                    <span class="stock-badge stock-low">{{ product.stock }} units</span>
+                  {% else %}
+                    <span class="stock-badge stock-out">Out of stock</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if product.is_active %}
+                    <span class="status-badge status-active">
+                      <i class="bi bi-check-circle"></i> Active
+                    </span>
+                  {% else %}
+                    <span class="status-badge status-inactive">
+                      <i class="bi bi-x-circle"></i> Inactive
+                    </span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-primary" title="View Details">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <a href="{% url 'admin_edit_product' product.id %}" 
+                       class="btn btn-sm btn-outline-warning" title="Edit Product">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'admin_toggle_product' product.id %}" 
+                       class="btn btn-sm btn-outline-info" title="Toggle Status">
+                      <i class="bi bi-toggle-on"></i>
+                    </a>
+                    <a href="{% url 'admin_delete_product' product.id %}" 
+                       class="btn btn-sm btn-outline-danger" title="Delete Product"
+                       onclick="return confirm('Are you sure you want to delete this product?')">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="7" class="text-center py-4">
+                  <i class="bi bi-box" style="font-size: 48px; color: #ccc;"></i>
+                  <p class="text-muted mt-2">No products found</p>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Products pagination">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                  <i class="bi bi-chevron-double-left"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                  <i class="bi bi-chevron-left"></i>
+                </a>
+              </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+              {% if page_obj.number == num %}
+                <li class="page-item active">
+                  <span class="page-link">{{ num }}</span>
+                </li>
+              {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item">
+                  <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">{{ num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                  <i class="bi bi-chevron-right"></i>
+                </a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if category_filter %}&category={{ category_filter }}{% endif %}">
+                  <i class="bi bi-chevron-double-right"></i>
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+        </nav>
+        {% endif %}
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
